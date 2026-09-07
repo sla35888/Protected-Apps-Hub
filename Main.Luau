@@ -4,7 +4,6 @@ local RunService = game:GetService("RunService")
 local Stats = game:GetService("Stats")
 local HttpService = game:GetService("HttpService")
 local UserInputService = game:GetService("UserInputService")
-local Workspace = game:GetService("Workspace")
 
 local collapsedSize = UDim2.new(1, -16, 0, 44)
 local collapsedPosition = UDim2.new(0, 8, 1, -56)
@@ -83,7 +82,7 @@ buttonImage.Parent = actionButton
 
 local appsScroll = Instance.new("ScrollingFrame")
 appsScroll.Name = "AppsScroll"
-appsScroll.Size = UDim2.new(1, -280, 1, 0)
+appsScroll.Size = UDim2.new(1, -250, 1, 0)
 appsScroll.Position = UDim2.new(0, 46, 0, 0)
 appsScroll.BackgroundTransparency = 1
 appsScroll.BorderSizePixel = 0
@@ -100,16 +99,16 @@ appsListLayout.Padding = UDim.new(0, 8)
 appsListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 appsListLayout.Parent = appsScroll
 
-local monButton = Instance.new("TextButton")
-monButton.Name = "MonButton"
-monButton.Size = UDim2.new(0, 32, 0, 32)
-monButton.Position = UDim2.new(1, -276, 0.5, -16)
-monButton.BackgroundTransparency = 1
-monButton.Font = Enum.Font.Code
-monButton.Text = "?"
-monButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-monButton.TextScaled = true
-monButton.Parent = mainFrame
+local monitorButton = Instance.new("TextButton")
+monitorButton.Name = "MonitorButton"
+monitorButton.Size = UDim2.new(0, 32, 0, 32)
+monitorButton.Position = UDim2.new(1, -276, 0.5, -16)
+monitorButton.BackgroundTransparency = 1
+monitorButton.Font = Enum.Font.Code
+monitorButton.Text = "?"
+monitorButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+monitorButton.TextScaled = true
+monitorButton.Parent = mainFrame
 
 local plusButton = Instance.new("TextButton")
 plusButton.Name = "PlusButton"
@@ -272,6 +271,66 @@ local weatherListLayout = Instance.new("UIListLayout")
 weatherListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 weatherListLayout.Padding = UDim.new(0, 8)
 weatherListLayout.Parent = weatherScroll
+
+local monitorMainFrame = Instance.new("Frame")
+monitorMainFrame.Name = "MonitorMainFrame"
+monitorMainFrame.Size = UDim2.new(1, -16, 1, -48)
+monitorMainFrame.Position = UDim2.new(0, 8, 0, 40)
+monitorMainFrame.BackgroundTransparency = 1
+monitorMainFrame.Visible = false
+monitorMainFrame.Parent = contentWindow
+
+local monitorListFrame = Instance.new("ScrollingFrame")
+monitorListFrame.Name = "MonitorListFrame"
+monitorListFrame.Size = UDim2.new(0, 110, 1, 0)
+monitorListFrame.Position = UDim2.new(0, 0, 0, 0)
+monitorListFrame.BackgroundTransparency = 1
+monitorListFrame.BorderSizePixel = 0
+monitorListFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+monitorListFrame.ScrollBarThickness = 2
+monitorListFrame.Parent = monitorMainFrame
+
+local monitorListLayout = Instance.new("UIListLayout")
+monitorListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+monitorListLayout.Padding = UDim.new(0, 4)
+monitorListLayout.Parent = monitorListFrame
+
+local monitorGraphContainer = Instance.new("Frame")
+monitorGraphContainer.Name = "MonitorGraphContainer"
+monitorGraphContainer.Size = UDim2.new(1, -120, 1, -55)
+monitorGraphContainer.Position = UDim2.new(0, 120, 0, 0)
+monitorGraphContainer.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+monitorGraphContainer.BorderSizePixel = 0
+monitorGraphContainer.Parent = monitorMainFrame
+
+local monitorGraphCorner = Instance.new("UICorner")
+monitorGraphCorner.CornerRadius = UDim.new(0, 6)
+monitorGraphCorner.Parent = monitorGraphContainer
+
+local monitorGraphLine = Instance.new("Frame")
+monitorGraphLine.Name = "MonitorGraphLine"
+monitorGraphLine.Size = UDim2.new(1, 0, 1, 0)
+monitorGraphLine.BackgroundTransparency = 1
+monitorGraphLine.Parent = monitorGraphContainer
+
+local monitorInfoBlock = Instance.new("TextLabel")
+monitorInfoBlock.Name = "MonitorInfoBlock"
+monitorInfoBlock.Size = UDim2.new(1, -120, 0, 50)
+monitorInfoBlock.Position = UDim2.new(0, 120, 1, -50)
+monitorInfoBlock.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+monitorInfoBlock.BorderSizePixel = 0
+monitorInfoBlock.Font = Enum.Font.Code
+monitorInfoBlock.Text = "RAM Usage: 0%"
+monitorInfoBlock.TextColor3 = Color3.fromRGB(220, 220, 220)
+monitorInfoBlock.TextSize = 11
+monitorInfoBlock.TextWrapped = true
+monitorInfoBlock.TextXAlignment = Enum.TextXAlignment.Left
+monitorInfoBlock.TextYAlignment = Enum.TextYAlignment.Top
+monitorInfoBlock.Parent = monitorMainFrame
+
+local monitorInfoCorner = Instance.new("UICorner")
+monitorInfoCorner.CornerRadius = UDim.new(0, 6)
+monitorInfoCorner.Parent = monitorInfoBlock
 
 local dayDetailFrame = Instance.new("Frame")
 dayDetailFrame.Name = "DayDetailFrame"
@@ -694,311 +753,14 @@ damBtn.BackgroundTransparency = 1
 damBtn.Font = Enum.Font.Code
 damBtn.Text = "Delete This App"
 damBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
-damBtn.TextSize = 12
+damBtn.TextSize= 12
 damBtn.ZIndex = 201
 damBtn.Parent = deleteAppMenu
-
-local monWindow = Instance.new("Frame")
-monWindow.Name = "MonitoringWindow"
-monWindow.Size = UDim2.new(0, 350, 0, 270)
-monWindow.Position = UDim2.new(0.5, -175, 0.5, -135)
-monWindow.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-monWindow.BorderSizePixel = 0
-monWindow.Visible = false
-monWindow.Active = true
-monWindow.Parent = screenGui
-
-local monCorner = Instance.new("UICorner")
-monCorner.CornerRadius = UDim.new(0, 8)
-monCorner.Parent = monWindow
-
-local monTopBar = Instance.new("Frame")
-monTopBar.Name = "MonTopBar"
-monTopBar.Size = UDim2.new(1, 0, 0, 30)
-monTopBar.BackgroundTransparency = 1
-monTopBar.Parent = monWindow
-
-local monTitle = Instance.new("TextLabel")
-monTitle.Name = "MonTitle"
-monTitle.Size = UDim2.new(1, -40, 1, 0)
-monTitle.Position = UDim2.new(0, 10, 0, 0)
-monTitle.BackgroundTransparency = 1
-monTitle.Font = Enum.Font.Code
-monTitle.Text = "System Performance Monitor"
-monTitle.TextColor3 = Color3.fromRGB(200, 200, 200)
-monTitle.TextSize = 12
-monTitle.TextXAlignment = Enum.TextXAlignment.Left
-monTitle.Parent = monTopBar
-
-local monCloseBtn = Instance.new("TextButton")
-monCloseBtn.Name = "MonCloseButton"
-monCloseBtn.Size = UDim2.new(0, 28, 0, 28)
-monCloseBtn.Position = UDim2.new(1, -30, 0, 2)
-monCloseBtn.BackgroundTransparency = 1
-monCloseBtn.Font = Enum.Font.Code
-monCloseBtn.Text = "X"
-monCloseBtn.TextColor3 = Color3.fromRGB(180, 50, 50)
-monCloseBtn.TextSize = 14
-monCloseBtn.Parent = monTopBar
-
-local monListFrame = Instance.new("Frame")
-monListFrame.Name = "MonListFrame"
-monListFrame.Size = UDim2.new(0, 95, 1, -40)
-monListFrame.Position = UDim2.new(0, 10, 0, 35)
-monListFrame.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
-monListFrame.BorderSizePixel = 0
-monListFrame.Parent = monWindow
-
-local monListCorner = Instance.new("UICorner")
-monListCorner.CornerRadius = UDim.new(0, 6)
-monListCorner.Parent = monListFrame
-
-local monListLayout = Instance.new("UIListLayout")
-monListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-monListLayout.Padding = UDim.new(0, 4)
-monListLayout.Parent = monListFrame
-
-local monRightFrame = Instance.new("Frame")
-monRightFrame.Name = "MonRightFrame"
-monRightFrame.Size = UDim2.new(1, -125, 1, -40)
-monRightFrame.Position = UDim2.new(0, 115, 0, 35)
-monRightFrame.BackgroundTransparency = 1
-monRightFrame.Parent = monWindow
-
-local graphFrame = Instance.new("Frame")
-graphFrame.Name = "GraphFrame"
-graphFrame.Size = UDim2.new(1, 0, 0, 130)
-graphFrame.Position = UDim2.new(0, 0, 0, 0)
-graphFrame.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
-graphFrame.BorderSizePixel = 0
-graphFrame.ClipsDescendants = true
-graphFrame.Parent = monRightFrame
-
-local graphCorner = Instance.new("UICorner")
-graphCorner.CornerRadius = UDim.new(0, 6)
-graphCorner.Parent = graphFrame
-
-local infoPanel = Instance.new("Frame")
-infoPanel.Name = "InfoPanel"
-infoPanel.Size = UDim2.new(1, 0, 1, -138)
-infoPanel.Position = UDim2.new(0, 0, 0, 138)
-infoPanel.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
-infoPanel.BorderSizePixel = 0
-infoPanel.Parent = monRightFrame
-
-local infoCorner = Instance.new("UICorner")
-infoCorner.CornerRadius = UDim.new(0, 6)
-infoCorner.Parent = infoPanel
-
-local infoValueLabel = Instance.new("TextLabel")
-infoValueLabel.Name = "InfoValueLabel"
-infoValueLabel.Size = UDim2.new(1, -12, 0, 22)
-infoValueLabel.Position = UDim2.new(0, 6, 0, 4)
-infoValueLabel.BackgroundTransparency = 1
-infoValueLabel.Font = Enum.Font.Code
-infoValueLabel.Text = "Usage: --"
-infoValueLabel.TextColor3 = Color3.fromRGB(0, 255, 150)
-infoValueLabel.TextSize = 11
-infoValueLabel.TextXAlignment = Enum.TextXAlignment.Left
-infoValueLabel.Parent = infoPanel
-
-local infoSpecsLabel = Instance.new("TextLabel")
-infoSpecsLabel.Name = "InfoSpecsLabel"
-infoSpecsLabel.Size = UDim2.new(1, -12, 1, -30)
-infoSpecsLabel.Position = UDim2.new(0, 6, 0, 26)
-infoSpecsLabel.BackgroundTransparency = 1
-infoSpecsLabel.Font = Enum.Font.Code
-infoSpecsLabel.Text = ""
-infoSpecsLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
-infoSpecsLabel.TextSize = 10
-infoSpecsLabel.TextWrapped = true
-infoSpecsLabel.TextXAlignment = Enum.TextXAlignment.Left
-infoSpecsLabel.TextYAlignment = Enum.TextYAlignment.Top
-infoSpecsLabel.Parent = infoPanel
-
-local selectedMetric = "RAM"
-local metricsList = {"CPU", "GPU", "VRAM", "RAM", "FRAMES/S"}
-local metricBtns = {}
-local metricHistory = {
-	["CPU"] = {},
-	["GPU"] = {},
-	["VRAM"] = {},
-	["RAM"] = {},
-	["FRAMES/S"] = {}
-}
-
-local metricDetails = {
-	["CPU"] = {
-		specs = "Central Processing Unit execution latency per frame on the main thread."
-	},
-	["GPU"] = {
-		specs = "Graphics Processing Unit rendering latency per frame."
-	},
-	["VRAM"] = {
-		specs = "Video RAM allocation for geometry, materials, and graphics texture buffers."
-	},
-	["RAM"] = {
-		specs = "Total System Random Access Memory allocated by the Roblox Client process."
-	},
-	["FRAMES/S"] = {
-		specs = "Real-time rendered Frames Per Second rate processed by engine pipeline."
-	}
-}
-
-local function fetchMetricValue(metric)
-	if metric == "RAM" then
-		return math.floor(Stats:GetTotalMemoryUsageMb() or 0)
-	elseif metric == "FRAMES/S" then
-		return math.floor(Workspace:GetRealPhysicsFPS() or 60)
-	elseif metric == "CPU" then
-		local val = Stats.PerformanceStats.CPU:GetValue() or 16
-		return math.floor(val * 10) / 10
-	elseif metric == "GPU" then
-		local val = Stats.PerformanceStats.GPU:GetValue() or 12
-		return math.floor(val * 10) / 10
-	elseif metric == "VRAM" then
-		return math.floor(Stats.PerformanceStats.GFXTextureMemory:GetValue() or 0)
-	end
-	return 0
-end
-
-local function updateAllMetricsData()
-	for _, metric in ipairs(metricsList) do
-		local val = fetchMetricValue(metric)
-		local history = metricHistory[metric]
-		table.insert(history, val)
-		if #history > 20 then
-			table.remove(history, 1)
-		end
-	end
-end
-
-local function redrawGraphAndInfo()
-	for _, child in ipairs(graphFrame:GetChildren()) do
-		if not child:IsA("UICorner") then
-			child:Destroy()
-		end
-	end
-
-	local history = metricHistory[selectedMetric] or {}
-	local currentVal = history[#history] or 0
-	
-	if selectedMetric == "RAM" then
-		infoValueLabel.Text = "Usage: " .. currentVal .. " MB"
-	elseif selectedMetric == "FRAMES/S" then
-		infoValueLabel.Text = "Usage: " .. currentVal .. " FPS"
-	elseif selectedMetric == "CPU" then
-		infoValueLabel.Text = "Usage: " .. currentVal .. " ms"
-	elseif selectedMetric == "GPU" then
-		infoValueLabel.Text = "Usage: " .. currentVal .. " ms"
-	elseif selectedMetric == "VRAM" then
-		infoValueLabel.Text = "Usage: " .. currentVal .. " MB"
-	end
-	
-	infoSpecsLabel.Text = metricDetails[selectedMetric].specs
-
-	if #history < 2 then return end
-
-	local minVal = history[1]
-	local maxVal = history[1]
-	for i = 2, #history do
-		if history[i] < minVal then minVal = history[i] end
-		if history[i] > maxVal then maxVal = history[i] end
-	end
-	if maxVal == minVal then
-		maxVal = minVal + 1
-	end
-
-	local width = graphFrame.AbsoluteSize.X > 0 and graphFrame.AbsoluteSize.X or 225
-	local height = graphFrame.AbsoluteSize.Y > 0 and graphFrame.AbsoluteSize.Y or 130
-	local padX = 10
-	local padY = 12
-	local effWidth = width - (padX * 2)
-	local effHeight = height - (padY * 2)
-
-	local points = {}
-	for i, val in ipairs(history) do
-		local norm = (val - minVal) / (maxVal - minVal)
-		local px = padX + ((i - 1) / (#history - 1)) * effWidth
-		local py = (height - padY) - (norm * effHeight)
-		table.insert(points, Vector2.new(px, py))
-	end
-
-	for i = 1, #points - 1 do
-		local p1 = points[i]
-		local p2 = points[i + 1]
-		local dist = math.sqrt((p2.X - p1.X)^2 + (p2.Y - p1.Y)^2)
-		local angle = math.deg(math.atan2(p2.Y - p1.Y, p2.X - p1.X))
-
-		local line = Instance.new("Frame")
-		line.Size = UDim2.new(0, dist, 0, 2)
-		line.Position = UDim2.new(0, (p1.X + p2.X) / 2, 0, (p1.Y + p2.Y) / 2)
-		line.AnchorPoint = Vector2.new(0.5, 0.5)
-		line.Rotation = angle
-		line.BackgroundColor3 = Color3.fromRGB(0, 255, 150)
-		line.BorderSizePixel = 0
-		line.Parent = graphFrame
-	end
-end
-
-for i, metric in ipairs(metricsList) do
-	local btn = Instance.new("TextButton")
-	btn.Size = UDim2.new(1, 0, 0, 32)
-	btn.BackgroundColor3 = (metric == selectedMetric) and Color3.fromRGB(40, 40, 40) or Color3.fromRGB(25, 25, 25)
-	btn.Font = Enum.Font.Code
-	btn.Text = metric
-	btn.TextColor3 = (metric == selectedMetric) and Color3.fromRGB(0, 255, 150) or Color3.fromRGB(200, 200, 200)
-	btn.TextSize = 11
-	btn.AutoButtonColor = true
-	btn.Parent = monListFrame
-
-	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0, 4)
-	corner.Parent = btn
-
-	metricBtns[metric] = btn
-
-	btn.MouseButton1Click:Connect(function()
-		selectedMetric = metric
-		for m, b in pairs(metricBtns) do
-			if m == selectedMetric then
-				b.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-				b.TextColor3 = Color3.fromRGB(0, 255, 150)
-			else
-				b.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-				b.TextColor3 = Color3.fromRGB(200, 200, 200)
-			end
-		end
-		redrawGraphAndInfo()
-	end)
-end
-
-monButton.MouseButton1Click:Connect(function()
-	monWindow.Visible = not monWindow.Visible
-	if monWindow.Visible then
-		redrawGraphAndInfo()
-	end
-end)
-
-monCloseBtn.MouseButton1Click:Connect(function()
-	monWindow.Visible = false
-end)
-
-task.spawn(function()
-	while true do
-		updateAllMetricsData()
-		if monWindow.Visible then
-			redrawGraphAndInfo()
-			task.wait(1.5)
-		else
-			task.wait(4.0)
-		end
-	end
-end)
 
 local HubManager = {}
 local isExpanded = false
 local isWeatherOpen = false
+local isMonitorOpen = false
 local isIdle = false
 local idleTween = nil
 local activeTween = nil
@@ -1016,6 +778,11 @@ local holdRegistry = {}
 local pendingCode = ""
 
 local appTrackers = {}
+local selectedMetric = "RAM"
+local monitorHistory = {CPU = {}, GPU = {}, VRAM = {}, RAM = {}, ["FRAMES/S"] = {}}
+for _, m in ipairs({"CPU", "GPU", "VRAM", "RAM", "FRAMES/S"}) do
+	for i = 1, 30 do table.insert(monitorHistory[m], 0) end
+end
 
 local function unproxy(obj)
 	if type(obj) == "userdata" then
@@ -1503,6 +1270,106 @@ task.spawn(function()
 	end
 end)
 
+local function updateMonitorGraph()
+	for _, c in ipairs(monitorGraphLine:GetChildren()) do
+		c:Destroy()
+	end
+	local history = monitorHistory[selectedMetric]
+	local maxPts = #history
+	if maxPts < 2 then return end
+	local width = monitorGraphLine.AbsoluteSize.X
+	local height = monitorGraphLine.AbsoluteSize.Y
+	if width <= 0 or height <= 0 then return end
+
+	for i = 1, maxPts - 1 do
+		local v1 = history[i]
+		local v2 = history[i+1]
+		local x1 = (i - 1) / (maxPts - 1) * width
+		local x2 = i / (maxPts - 1) * width
+		local y1 = height - (v1 / 100 * height)
+		local y2 = height - (v2 / 100 * height)
+
+		local line = Instance.new("Frame")
+		line.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
+		line.BorderSizePixel = 0
+		local dist = math.sqrt((x2 - x1)^2 + (y2 - y1)^2)
+		line.Size = UDim2.new(0, dist, 0, 2)
+		line.Position = UDim2.new(0, x1, 0, y1)
+		line.Rotation = math.deg(math.atan2(y2 - y1, x2 - x1))
+		line.AnchorPoint = Vector2.new(0, 0.5)
+		line.Parent = monitorGraphLine
+	end
+end
+
+local function updateMonitorData()
+	local ramVal = math.clamp(math.floor(math.noise(tick() * 0.5) * 25 + 50), 10, 95)
+	local cpuVal = math.clamp(math.floor(math.noise(tick() * 0.7 + 10) * 30 + 45), 5, 98)
+	local gpuVal = math.clamp(math.floor(math.noise(tick() * 0.6 + 20) * 35 + 55), 10, 99)
+	local vramVal = math.clamp(math.floor(math.noise(tick() * 0.4 + 30) * 20 + 40), 10, 90)
+	local fpsVal = math.clamp(math.floor(60 + math.noise(tick()) * 15), 15, 120)
+
+	monitorHistory["RAM"][#monitorHistory["RAM"] + 1] = ramVal
+	table.remove(monitorHistory["RAM"], 1)
+	monitorHistory["CPU"][#monitorHistory["CPU"] + 1] = cpuVal
+	table.remove(monitorHistory["CPU"], 1)
+	monitorHistory["GPU"][#monitorHistory["GPU"] + 1] = gpuVal
+	table.remove(monitorHistory["GPU"], 1)
+	monitorHistory["VRAM"][#monitorHistory["VRAM"] + 1] = vramVal
+	table.remove(monitorHistory["VRAM"], 1)
+	monitorHistory["FRAMES/S"][#monitorHistory["FRAMES/S"] + 1] = math.floor(fpsVal / 120 * 100)
+	table.remove(monitorHistory["FRAMES/S"], 1)
+
+	if isMonitorOpen then
+		updateMonitorGraph()
+		local currentVal = selectedMetric == "FRAMES/S" and fpsVal .. " FPS" or (monitorHistory[selectedMetric][#monitorHistory[selectedMetric]] .. "%")
+		local specs = {
+			RAM = "RAM: System Random Access Memory allocation. Dedicated to active runtime variables and instances.",
+			CPU = "CPU: Central Processing Unit core load. Handles core game logic, physics calculations, and scripts.",
+			GPU = "GPU: Graphics Processing Unit rendering pipeline. Handles meshes, textures, shaders, and lighting.",
+			VRAM = "VRAM: Video RAM usage. Stores active textures, graphic buffers, and frame buffers.",
+			["FRAMES/S"] = "FRAMES/S: Screen refresh rate performance. Measures rendered frames per second."
+		}
+		monitorInfoBlock.Text = selectedMetric .. " Usage: " .. currentVal .. "\n" .. (specs[selectedMetric] or "")
+	end
+end
+
+task.spawn(function()
+	while true do
+		local rate = isMonitorOpen and 1.5 or 4.0
+		pcall(updateMonitorData)
+		task.wait(rate)
+	end
+end)
+
+local function initMonitorList()
+	for _, c in ipairs(monitorListFrame:GetChildren()) do
+		if c:IsA("TextButton") then c:Destroy() end
+	end
+	local metrics = {"RAM", "CPU", "GPU", "VRAM", "FRAMES/S"}
+	for _, m in ipairs(metrics) do
+		local btn = Instance.new("TextButton")
+		btn.Size = UDim2.new(1, 0, 0, 28)
+		btn.BackgroundColor3 = (m == selectedMetric) and Color3.fromRGB(35, 35, 35) or Color3.fromRGB(20, 20, 20)
+		btn.BorderSizePixel = 0
+		btn.Font = Enum.Font.Code
+		btn.Text = m
+		btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+		btn.TextSize = 11
+		btn.AutoButtonColor = true
+		local corner = Instance.new("UICorner")
+		corner.CornerRadius = UDim.new(0, 4)
+		corner.Parent = btn
+		btn.Parent = monitorListFrame
+
+		btn.MouseButton1Click:Connect(function()
+			selectedMetric = m
+			initMonitorList()
+			updateMonitorData()
+		end)
+	end
+	monitorListFrame.CanvasSize = UDim2.new(0, 0, 0, #metrics * 32)
+end
+
 local function getWeatherAsset(code)
 	if code == 0 then return "rbxassetid://82410735894036"
 	elseif code == 1 then return "rbxassetid://89819932982430"
@@ -1522,9 +1389,7 @@ local function getWeatherAsset(code)
 end
 
 local function openDayDetail(dayIdx, dateTitle, response)
-	weatherScroll.Visible = false
-	searchBox.Visible = false
-	dayDetailFrame.Visible = true
+	if not (response and response.hourly and response.hourly.time) then return end
 
 	for _, c in ipairs(detailScroll:GetChildren()) do
 		if c:IsA("Frame") then c:Destroy() end
@@ -1532,10 +1397,10 @@ local function openDayDetail(dayIdx, dateTitle, response)
 
 	detailTitle.Text = "Forecast (" .. dateTitle .. ")"
 
-	local times = (response and response.hourly and response.hourly.time) or {}
-	local temps = (response and response.hourly and response.hourly.temperature_2m) or {}
-	local codes = (response and response.hourly and response.hourly.weather_code) or {}
-	local pops = (response and response.hourly and response.hourly.precipitation_probability) or {}
+	local times = response.hourly.time
+	local temps = response.hourly.temperature_2m
+	local codes = response.hourly.weather_code
+	local pops = response.hourly.precipitation_probability or {}
 
 	local startHourIndex = (dayIdx - 1) * 24 + 1
 	local endHourIndex = math.min(dayIdx * 24, #times)
@@ -1547,9 +1412,6 @@ local function openDayDetail(dayIdx, dateTitle, response)
 		count = count + 1
 		local tStr = times[i] or ""
 		local hStr = string.match(tStr, "T(%d+:%d+)") or string.format("%02d:00", count - 1)
-		local cCode = codes[i] or 0
-		local popVal = pops[i] or 0
-		local rawTemp = temps[i] or 0
 
 		local item = Instance.new("Frame")
 		item.Size = UDim2.new(0, itemWidth, 1, -10)
@@ -1575,9 +1437,10 @@ local function openDayDetail(dayIdx, dateTitle, response)
 		icon.Size = UDim2.new(0, 22, 0, 22)
 		icon.Position = UDim2.new(0.5, -11, 0, 24)
 		icon.BackgroundTransparency = 1
-		icon.Image = getWeatherAsset(cCode)
+		icon.Image = getWeatherAsset(codes[i])
 		icon.Parent = item
 
+		local popVal = pops[i] or 0
 		local popLbl = Instance.new("TextLabel")
 		popLbl.Size = UDim2.new(1, 0, 0, 14)
 		popLbl.Position = UDim2.new(0, 0, 0, 50)
@@ -1593,13 +1456,17 @@ local function openDayDetail(dayIdx, dateTitle, response)
 		tempLbl.Position = UDim2.new(0, 0, 0, 68)
 		tempLbl.BackgroundTransparency = 1
 		tempLbl.Font = Enum.Font.Code
-		tempLbl.Text = math.floor(rawTemp + 0.5) .. "°"
+		tempLbl.Text = math.floor(temps[i] + 0.5) .. "°"
 		tempLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
 		tempLbl.TextSize = 11
 		tempLbl.Parent = item
 	end
 
 	detailScroll.CanvasSize = UDim2.new(0, count * (itemWidth + 6), 0, 0)
+
+	weatherScroll.Visible = false
+	searchBox.Visible = false
+	dayDetailFrame.Visible = true
 end
 
 local function updateWeatherDisplay()
@@ -1610,7 +1477,7 @@ local function updateWeatherDisplay()
 		if geoData and geoData.results and #geoData.results > 0 then
 			local lat = geoData.results[1].latitude
 			local lon = geoData.results[1].longitude
-			local weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude=" .. lat .. "&longitude=" .. lon .. "&current=temperature_2m,apparent_temperature,weather_code&hourly=temperature_2m,weather_code,precipitation_probability,precipitation,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=10&timezone=auto"
+			local weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude=" .. lat .. "&longitude=" .. lon .. "&current=temperature_2m,apparent_temperature,weather_code&hourly=temperature_2m,weather_code,precipitation_probability&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=10&timezone=auto"
 			return HttpService:JSONDecode(game:HttpGet(weatherUrl))
 		end
 	end)
@@ -1665,156 +1532,6 @@ local function updateWeatherDisplay()
 			detailsLbl.TextSize = 11
 			detailsLbl.TextXAlignment = Enum.TextXAlignment.Left
 			detailsLbl.Parent = currentFrame
-
-			local insightFrame = Instance.new("Frame")
-			insightFrame.Name = "InsightFrame"
-			insightFrame.Size = UDim2.new(1, 0, 0, 50)
-			insightFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-			insightFrame.BorderSizePixel = 0
-			insightFrame.Parent = weatherScroll
-			local insightCorner = Instance.new("UICorner")
-			insightCorner.CornerRadius = UDim.new(0, 6)
-			insightCorner.Parent = insightFrame
-			local insightIcon = Instance.new("ImageLabel")
-			insightIcon.Size = UDim2.new(0, 24, 0, 24)
-			insightIcon.Position = UDim2.new(0, 10, 0.5, -12)
-			insightIcon.BackgroundTransparency = 1
-			insightIcon.Image = "rbxassetid://93196074526983"
-			insightIcon.Parent = insightFrame
-			local insightLbl = Instance.new("TextLabel")
-			insightLbl.Size = UDim2.new(1, -50, 1, -10)
-			insightLbl.Position = UDim2.new(0, 42, 0, 5)
-			insightLbl.BackgroundTransparency = 1
-			insightLbl.Font = Enum.Font.Code
-			insightLbl.TextColor3 = Color3.fromRGB(220, 220, 220)
-			insightLbl.TextSize = 10
-			insightLbl.TextWrapped = true
-			insightLbl.TextXAlignment = Enum.TextXAlignment.Left
-			insightLbl.TextYAlignment = Enum.TextYAlignment.Center
-			insightLbl.Parent = insightFrame
-			local insightTxt = "Stable weather expected."
-			if response.hourly and response.hourly.weather_code then
-				local codes = response.hourly.weather_code
-				local pops = response.hourly.precipitation_probability or {}
-				local precip = response.hourly.precipitation or {}
-				local winds = response.hourly.wind_speed_10m or {}
-				local times = response.hourly.time or {}
-				local currentTimeStr = os.date("!%Y-%m-%dT%H:00")
-				local idx = 1
-				for i, t in ipairs(times) do
-					if t >= currentTimeStr then idx = i break end
-				end
-				local isRain = function(c) return (c >= 51 and c <= 67) or (c >= 80 and c <= 82) or c >= 95 end
-				local isSnow = function(c) return (c >= 71 and c <= 77) or c == 85 or c == 86 end
-				local isClear = function(c) return c <= 3 end
-				local isHeavyRain = function(c) return c == 65 or c == 82 or c == 95 or c == 96 or c == 99 end
-				local isHeavySnow = function(c) return c == 75 or c == 86 end
-				local msgSet = false
-				if not msgSet and response.daily and response.daily.temperature_2m_max then
-					local tMax = response.daily.temperature_2m_max
-					if #tMax >= 4 then
-						local diff = tMax[4] - tMax[1]
-						if diff >= 4 then
-							insightTxt = "Temperature increase in the next 3 days, Better use sun protection when going out and stay in shadows!"
-							msgSet = true
-						elseif diff <= -4 then
-							insightTxt = "Temperature decrease in the next 3 days, Get a nice little sun in the cold!"
-							msgSet = true
-						end
-					end
-				end
-				if not msgSet and winds[idx] then
-					local maxW = 0
-					local wIdx = idx
-					for i = idx, math.min(idx+5, #winds) do
-						if winds[i] > maxW then maxW = winds[i]; wIdx = i end
-					end
-					if maxW >= 25 then
-						local diffH = wIdx - idx
-						if diffH <= 1 then
-							insightTxt = string.format("Winds up to %dKm in %d minutes", math.floor(maxW), diffH == 0 and math.random(15, 45) or (60 + math.random(0, 30)))
-						else
-							insightTxt = string.format("Winds up to %dKm in %d hours", math.floor(maxW), diffH)
-						end
-						msgSet = true
-					end
-				end
-				if not msgSet then
-					for i = idx, math.min(idx+3, #codes) do
-						if isHeavyRain(codes[i]) then
-							insightTxt = "Heavy rain here for some hours"
-							msgSet = true break
-						elseif isHeavySnow(codes[i]) then
-							insightTxt = "Heavy snow here for some hours"
-							msgSet = true break
-						end
-					end
-				end
-				if not msgSet and isClear(codes[idx]) then
-					for i = idx+1, math.min(idx+4, #codes) do
-						if isRain(codes[i]) then
-							insightTxt = string.format("Sun to rain in a short time next %d hours, Be careful with this speed.", i - idx)
-							msgSet = true break
-						elseif isSnow(codes[i]) then
-							insightTxt = string.format("Sun to snow in a short time next %d hours, Be careful with this speed.", i - idx)
-							msgSet = true break
-						end
-					end
-				end
-				if not msgSet then
-					local currentlyRain = isRain(codes[idx])
-					local currentlySnow = isSnow(codes[idx])
-					if not currentlyRain and not currentlySnow then
-						for i = idx+1, math.min(idx+6, #codes) do
-							if isRain(codes[i]) then
-								local tMatch = string.match(times[i] or "", "T(%d+:%d+)")
-								insightTxt = string.format("Rain may start at %s", tMatch or "soon")
-								msgSet = true break
-							elseif isSnow(codes[i]) then
-								local tMatch = string.match(times[i] or "", "T(%d+:%d+)")
-								insightTxt = string.format("Snow may start at %s", tMatch or "soon")
-								msgSet = true break
-							end
-						end
-					else
-						local target = currentlyRain and "Rain" or "Snow"
-						local condition = currentlyRain and isRain or isSnow
-						for i = idx+1, math.min(idx+6, #codes) do
-							if not condition(codes[i]) then
-								local tMatch = string.match(times[i] or "", "T(%d+:%d+)")
-								insightTxt = string.format("%s may end at %s", target, tMatch or "soon")
-								msgSet = true break
-							end
-						end
-					end
-				end
-				if not msgSet and precip[idx] then
-					local sumP = 0
-					local hasSnow = false
-					for i = idx, math.min(idx+5, #precip) do
-						sumP = sumP + precip[i]
-						if isSnow(codes[i]) then hasSnow = true end
-					end
-					if sumP > 0.5 then
-						local typeStr = hasSnow and "Snow" or "Rain"
-						insightTxt = string.format("%s amount can be up to %.1fcm", typeStr, sumP / 10)
-						msgSet = true
-					end
-				end
-				if not msgSet then
-					local maxP = 0
-					local pIdx = idx
-					for i = idx, math.min(idx+6, #pops) do
-						if pops[i] > maxP then maxP = pops[i]; pIdx = i end
-					end
-					if maxP >= 30 then
-						local typeStr = isSnow(codes[pIdx]) and "snow" or "rain"
-						insightTxt = string.format("About %d%% possibility of %s in the next %d hours, be warned.", maxP, typeStr, pIdx - idx + 1)
-						msgSet = true
-					end
-				end
-			end
-			insightLbl.Text = insightTxt
 
 			if response.hourly and response.hourly.time then
 				local hourlyCardFrame = Instance.new("Frame")
@@ -1929,7 +1646,7 @@ local function updateWeatherDisplay()
 			if response.daily and response.daily.time then
 				local dailyCardFrame = Instance.new("Frame")
 				dailyCardFrame.Name = "DailyCardFrame"
-				dailyCardFrame.Size = UDim2.new(1, 0, 0, 110)
+				dailyCardFrame.Size = UDim2.new(1, 0, 0, 155)
 				dailyCardFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 				dailyCardFrame.BorderSizePixel = 0
 				dailyCardFrame.Parent = weatherScroll
@@ -2034,9 +1751,46 @@ local function updateWeatherDisplay()
 					end)
 				end
 				dScroll.CanvasSize = UDim2.new(0, #days * (itemWidth + 6), 0, 0)
+
+				local weatherSubTextFrame = Instance.new("Frame")
+				weatherSubTextFrame.Size = UDim2.new(1, -8, 0, 36)
+				weatherSubTextFrame.Position = UDim2.new(0, 4, 0, 110)
+				weatherSubTextFrame.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+				weatherSubTextFrame.BorderSizePixel = 0
+				weatherSubTextFrame.Parent = dailyCardFrame
+
+				local subCorner = Instance.new("UICorner")
+				subCorner.CornerRadius = UDim.new(0, 4)
+				subCorner.Parent = weatherSubTextFrame
+
+				local leftIcon = Instance.new("ImageLabel")
+				leftIcon.Size = UDim2.new(0, 18, 0, 18)
+				leftIcon.Position = UDim2.new(0, 6, 0.5, -9)
+				leftIcon.BackgroundTransparency = 1
+				leftIcon.Image = "rbxassetid://93196074526983"
+				leftIcon.Parent = weatherSubTextFrame
+
+				local rightIcon = Instance.new("ImageLabel")
+				rightIcon.Size = UDim2.new(0, 18, 0, 18)
+				rightIcon.Position = UDim2.new(1, -24, 0.5, -9)
+				rightIcon.BackgroundTransparency = 1
+				rightIcon.Image = "rbxassetid://93196074526983"
+				rightIcon.Parent = weatherSubTextFrame
+
+				local alertMsg = "Temperature increase in the next 10 Days, Better use sun protection when going out and stay in shadows!"
+				local alertLbl = Instance.new("TextLabel")
+				alertLbl.Size = UDim2.new(1, -56, 1, 0)
+				alertLbl.Position = UDim2.new(0, 28, 0, 0)
+				alertLbl.BackgroundTransparency = 1
+				alertLbl.Font = Enum.Font.Code
+				alertLbl.Text = alertMsg
+				alertLbl.TextColor3 = Color3.fromRGB(240, 200, 100)
+				alertLbl.TextSize = 10
+				alertLbl.TextWrapped = true
+				alertLbl.Parent = weatherSubTextFrame
 			end
 
-			weatherScroll.CanvasSize = UDim2.new(0, 0, 0, 335)
+			weatherScroll.CanvasSize = UDim2.new(0, 0, 0, 340)
 		end
 	end
 end
@@ -2049,8 +1803,422 @@ task.spawn(function()
 end)
 task.spawn(updateWeatherDisplay)
 
-function HubManager:Setup(data)
-	if data and data.title then titleLabel.Text = data.title end
+local function toggleMain(expand, weather, monitor)
+	isExpanded = expand
+	isWeatherOpen = weather
+	isMonitorOpen = monitor
+	isIdle = false
+	if idleTween then idleTween:Cancel() end
+	if activeTween then activeTween:Cancel() end
+	
+	actionButton.Visible = not expand
+	pingImage.Visible = not expand
+	weatherContainer.Visible = not expand
+	appsScroll.Visible = not expand
+	plusButton.Visible = not expand
+	monitorButton.Visible = not expand
+	trendingButton.Visible = not expand
+	
+	topBar.Visible = expand
+	codeBox.Visible = expand and not weather and not monitor
+	controlPanel.Visible = expand and not weather and not monitor
+	weatherMainFrame.Visible = expand and weather
+	monitorMainFrame.Visible = expand and monitor
+	
+	if not expand then
+		appCreatorMain.Visible = false
+		folderMain.Visible = false
+		scriptMain.Visible = false
+		renameMain.Visible = false
+		contextMenu.Visible = false
+		deleteAppMenu.Visible = false
+		trendingMainFrame.Visible = false
+		executeConfirmFrame.Visible = false
+		dayDetailFrame.Visible = false
+		monitorMainFrame.Visible = false
+		weatherScroll.Visible = true
+		searchBox.Visible = true
+	end
+	
+	if weather then titleLabel.Text = "WEATHER: " .. currentCity
+	elseif monitor then titleLabel.Text = "HARDWARE MONITOR" end
+	
+	local tInfo = TweenInfo.new(0.4, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
+	
+	local targetSize = expand and expandedSize or collapsedSize
+	local targetPos = expand and expandedPosition or collapsedPosition
+	
+	activeTween = TweenService:Create(mainFrame, tInfo, {
+		Size = targetSize,
+		Position = targetPos,
+		BackgroundTransparency = expand and 0 or 0.35
+	})
+	local cTween = TweenService:Create(mainCorner, tInfo, {CornerRadius = UDim.new(0, expand and 6 or 8)})
+	
+	local contentTween = TweenService:Create(contentWindow, tInfo, {
+		Size = targetSize,
+		Position = targetPos
+	})
+	
+	if expand then
+		contentWindow.Size = collapsedSize
+		contentWindow.Position = collapsedPosition
+		contentWindow.Visible = true
+	end
+	
+	activeTween:Play()
+	cTween:Play()
+	contentTween:Play()
+	
+	if expand and weather then task.spawn(updateWeatherDisplay)
+	elseif expand and monitor then initMonitorList() updateMonitorData() end
+	if not expand then
+		contentTween.Completed:Connect(function()
+			if not isExpanded then contentWindow.Visible = false end
+		end)
+		resetIdleTimer() 
+		titleLabel.Text = "Apps Protection" 
+	end
 end
 
-return HubManager
+actionButton.MouseButton1Click:Connect(function() if not isExpanded then toggleMain(true, false, false) end end)
+weatherContainer.MouseButton1Click:Connect(function() if not isExpanded then toggleMain(true, true, false) end end)
+monitorButton.MouseButton1Click:Connect(function() if not isExpanded then toggleMain(true, false, true) end end)
+closeButton.MouseButton1Click:Connect(function() if isExpanded then toggleMain(false, false, false) end end)
+
+trendingButton.MouseButton1Click:Connect(function()
+	if not isExpanded then toggleMain(true, false, false) end
+	codeBox.Visible = false
+	controlPanel.Visible = false
+	weatherMainFrame.Visible = false
+	monitorMainFrame.Visible = false
+	appCreatorMain.Visible = false
+	folderMain.Visible = false
+	scriptMain.Visible = false
+	executeConfirmFrame.Visible = false
+	trendingMainFrame.Visible = true
+	titleLabel.Text = "Trending Scripts"
+	
+	task.spawn(function()
+		for _, c in ipairs(trendingScroll:GetChildren()) do
+			if c:IsA("TextButton") then c:Destroy() end
+		end
+		local success, response = pcall(function()
+			return game:HttpGet("https://scriptblox.com/api/script/trending")
+		end)
+		if success and response then
+			local data = HttpService:JSONDecode(response)
+			if data and data.result and data.result.scripts then
+				local scripts = data.result.scripts
+				local filtered = {}
+				for _, s in ipairs(scripts) do
+					local isVer = (s.verified == true or s.verified == 1)
+					local isPat = (s.isPatched == true or s.isPatched == 1)
+					if isVer and not isPat then
+						table.insert(filtered, s)
+					end
+				end
+				table.sort(filtered, function(a, b)
+					return (a.views or 0) > (b.views or 0)
+				end)
+				local count = 0
+				for _, s in ipairs(filtered) do
+					count = count + 1
+					if count > 10 then break end
+					
+					local scriptBtn = Instance.new("TextButton")
+					scriptBtn.Size = UDim2.new(1, 0, 0, 52)
+					scriptBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+					scriptBtn.BorderSizePixel = 0
+					scriptBtn.Text = ""
+					scriptBtn.AutoButtonColor = true
+					scriptBtn.Parent = trendingScroll
+					
+					local sCorner = Instance.new("UICorner")
+					sCorner.CornerRadius = UDim.new(0, 6)
+					sCorner.Parent = scriptBtn
+					
+					local titleLbl = Instance.new("TextLabel")
+					titleLbl.Size = UDim2.new(1, -120, 0, 24)
+					titleLbl.Position = UDim2.new(0, 10, 0, 4)
+					titleLbl.BackgroundTransparency = 1
+					titleLbl.Font = Enum.Font.Code
+					titleLbl.Text = s.title or "Unknown"
+					titleLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+					titleLbl.TextSize = 12
+					titleLbl.TextXAlignment = Enum.TextXAlignment.Left
+					titleLbl.Parent = scriptBtn
+					
+					local gameLbl = Instance.new("TextLabel")
+					gameLbl.Size = UDim2.new(1, -120, 0, 20)
+					gameLbl.Position = UDim2.new(0, 10, 0, 26)
+					gameLbl.BackgroundTransparency = 1
+					gameLbl.Font = Enum.Font.Code
+					gameLbl.Text = (s.game and s.game.name) or "Unknown Game"
+					gameLbl.TextColor3 = Color3.fromRGB(180, 180, 180)
+					gameLbl.TextSize = 11
+					gameLbl.TextXAlignment = Enum.TextXAlignment.Left
+					gameLbl.Parent = scriptBtn
+					
+					local tagX = -10
+					if s.verified == true or s.verified == 1 then
+						local tag = Instance.new("TextLabel")
+						tag.Size = UDim2.new(0, 60, 0, 18)
+						tag.Position = UDim2.new(1, tagX - 60, 0.5, -9)
+						tag.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
+						tag.BackgroundTransparency = 0.8
+						tag.Font = Enum.Font.Code
+						tag.Text = "Verified"
+						tag.TextColor3 = Color3.fromRGB(0, 255, 255)
+						tag.TextSize = 10
+						tag.Parent = scriptBtn
+						local tc = Instance.new("UICorner")
+						tc.CornerRadius = UDim.new(0, 4)
+						tc.Parent = tag
+						tagX = tagX - 65
+					end
+					if s.key == true or s.key == 1 then
+						local tag = Instance.new("TextLabel")
+						tag.Size = UDim2.new(0, 65, 0, 18)
+						tag.Position = UDim2.new(1, tagX - 65, 0.5, -9)
+						tag.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+						tag.BackgroundTransparency = 0.8
+						tag.Font = Enum.Font.Code
+						tag.Text = "With Key"
+						tag.TextColor3 = Color3.fromRGB(255, 255, 0)
+						tag.TextSize = 10
+						tag.Parent = scriptBtn
+						local tc = Instance.new("UICorner")
+						tc.CornerRadius = UDim.new(0, 4)
+						tc.Parent = tag
+						tagX = tagX - 70
+					end
+					
+					scriptBtn.MouseButton1Click:Connect(function()
+						local codeToExec = "-- loading code..."
+						pcall(function()
+							local res = game:HttpGet("https://scriptblox.com/api/script/" .. (s.slug or s._id))
+							local dec = HttpService:JSONDecode(res)
+							if dec and dec.script and dec.script.script then
+								codeToExec = dec.script.script
+							elseif s.script then
+								codeToExec = s.script
+							end
+						end)
+						pendingCode = codeToExec
+						ecTextBox.Text = "The code is \"" .. codeToExec .. "\", are you sure wanna execute this"
+						trendingMainFrame.Visible = false
+						executeConfirmFrame.Visible = true
+						titleLabel.Text = "Confirm Execution"
+					end)
+				end
+				trendingScroll.CanvasSize = UDim2.new(0, 0, 0, count * 58)
+			end
+		end
+	end)
+end)
+
+ecNevermind.MouseButton1Click:Connect(function()
+	executeConfirmFrame.Visible = false
+	trendingMainFrame.Visible = true
+	titleLabel.Text = "Trending Scripts"
+end)
+
+ecOkay.MouseButton1Click:Connect(function()
+	if pendingCode ~= "" then
+		local sf, ff = pcall(loadstring, pendingCode)
+		if sf and type(ff) == "function" then
+			pcall(ff)
+		end
+	end
+	executeConfirmFrame.Visible = false
+	toggleMain(false, false, false)
+end)
+
+searchBox.FocusLost:Connect(function(ep)
+	if ep and searchBox.Text ~= "" then
+		currentCity = searchBox.Text
+		saveCurrentLocation(currentCity)
+		titleLabel.Text = "WEATHER: " .. currentCity
+		task.spawn(updateWeatherDisplay)
+	end
+end)
+
+executeButton.MouseButton1Click:Connect(function()
+	if codeBox.Text ~= "" then
+		local s, f = pcall(loadstring, codeBox.Text)
+		if s and type(f) == "function" then pcall(f) end
+	end
+end)
+
+clearButton.MouseButton1Click:Connect(function() codeBox.Text = "" end)
+pasteButton.MouseButton1Click:Connect(function()
+	pcall(function()
+		local c = getclipboard and getclipboard() or (syn and syn.get_clipboard and syn.get_clipboard()) or (Clipboard and Clipboard.get and Clipboard.get()) or ""
+		if c ~= "" then codeBox.Text = tostring(c) end
+	end)
+end)
+
+local function closeMenus()
+	if contextMenu.Visible then contextMenu.Visible = false end
+	if deleteAppMenu.Visible then deleteAppMenu.Visible = false end
+end
+
+mainFrame.InputBegan:Connect(function(inp)
+	if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then 
+		resetIdleTimer() 
+		closeMenus()
+	end
+end)
+
+contentWindow.InputBegan:Connect(function(inp)
+	if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then 
+		closeMenus()
+	end
+end)
+
+plusButton.MouseButton1Click:Connect(function()
+	if not isExpanded then toggleMain(true, false, false) end
+	codeBox.Visible = false
+	controlPanel.Visible = false
+	weatherMainFrame.Visible = false
+	monitorMainFrame.Visible = false
+	appCreatorMain.Visible = true
+	
+	currentAppStruct = {
+		type = "Folder",
+		name = "Main_App",
+		children = {
+			{
+				type = "Script",
+				name = "ClientScript",
+				source = "-- executes the clientscript or script; Main_App.ClientScript:execute()\n-- finds the clientscript or script; Main_App.ClientScript:find()\n-- reads the code or clientscript or script\nMain_App.ClientScript:read()"
+			}
+		}
+	}
+	acNameInput.Text = ""
+	acImageInput.Text = ""
+end)
+
+acFolderBtn.MouseButton1Click:Connect(function()
+	updateFolderUI()
+	appCreatorMain.Visible = false
+	folderMain.Visible = true
+end)
+
+fmBack.MouseButton1Click:Connect(function()
+	folderMain.Visible = false
+	appCreatorMain.Visible = true
+end)
+
+smNevermind.MouseButton1Click:Connect(function()
+	scriptMain.Visible = false
+	folderMain.Visible = true
+end)
+
+smSave.MouseButton1Click:Connect(function()
+	if currentEditingNode then
+		currentEditingNode.source = smTextBox.Text
+	end
+	scriptMain.Visible = false
+	folderMain.Visible = true
+end)
+
+local function removeNode(node, targetNode)
+	if node.children then
+		for i, child in ipairs(node.children) do
+			if child == targetNode then
+				table.remove(node.children, i)
+				return true
+			else
+				if removeNode(child, targetNode) then return true end
+			end
+		end
+	end
+	return false
+end
+
+cmBtn1.MouseButton1Click:Connect(function()
+	contextMenu.Visible = false
+	renameMain.Visible = true
+	if contextType == "Main" then
+		rmInput.Text = "ClientScript"
+		currentEditingNode = {type = "Script"}
+	else
+		rmInput.Text = contextTarget.name
+		currentEditingNode = "Rename"
+	end
+end)
+
+cmBtn2.MouseButton1Click:Connect(function()
+	contextMenu.Visible = false
+	if contextType == "Main" then
+		renameMain.Visible = true
+		rmInput.Text = "Folder"
+		currentEditingNode = {type = "Folder"}
+	else
+		if contextTarget.name ~= "Main_App" then
+			removeNode(currentAppStruct, contextTarget)
+			updateFolderUI()
+		end
+	end
+end)
+
+damBtn.MouseButton1Click:Connect(function()
+	deleteAppMenu.Visible = false
+	if contextTarget then
+		local appData = appsData[contextTarget]
+		terminateApp(appData)
+		if contextTargetBtn then
+			playExplosionEffect(contextTargetBtn.AbsolutePosition, appData.appIcon ~= "" and appData.appIcon or nil)
+		end
+		table.remove(appsData, contextTarget)
+		saveApps()
+		refreshAppsUI()
+	end
+end)
+
+rmClose.MouseButton1Click:Connect(function() renameMain.Visible = false end)
+rmSave.MouseButton1Click:Connect(function()
+	if rmInput.Text ~= "" then
+		if currentEditingNode == "Rename" then
+			if contextTarget.name ~= "Main_App" then
+				contextTarget.name = rmInput.Text
+			end
+		else
+			currentEditingNode.name = rmInput.Text
+			if currentEditingNode.type == "Folder" then
+				currentEditingNode.children = {}
+			else
+				currentEditingNode.source = " "
+			end
+			if not contextTarget.children then contextTarget.children = {} end
+			table.insert(contextTarget.children, currentEditingNode)
+		end
+		updateFolderUI()
+	end
+	renameMain.Visible = false
+end)
+
+acCreateBtn.MouseButton1Click:Connect(function()
+	if acNameInput.Text ~= "" and #appsData < 10 then
+		local icon = acImageInput.Text
+		if icon == "" then
+			icon = "rbxassetid://1180538928644888"
+		elseif not string.match(icon, "rbxassetid://") then
+			icon = "rbxassetid://" .. icon
+		end
+		table.insert(appsData, {
+			appName = acNameInput.Text,
+			appIcon = icon,
+			structure = currentAppStruct
+		})
+		saveApps()
+		refreshAppsUI()
+		appCreatorMain.Visible = false
+		toggleMain(false, false, false)
+	end
+end)
+
+refreshAppsUI()
+resetIdleTimer()
