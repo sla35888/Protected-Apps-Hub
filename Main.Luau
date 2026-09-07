@@ -16,7 +16,7 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "OptimizedHubGui"
 screenGui.IgnoreGuiInset = true
 screenGui.ResetOnSpawn = false
-screenGui.DisplayOrder = 999999999999999999999999999967
+screenGui.DisplayOrder = 999999999999999999999999
 screenGui.Parent = CoreGui
 
 local mainFrame = Instance.new("Frame")
@@ -48,7 +48,7 @@ contentWindow.Name = "ContentWindow"
 contentWindow.Size = UDim2.new(1, -16, 0, 320)
 contentWindow.Position = UDim2.new(0, 8, 0.5, -160)
 contentWindow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-contentWindow.BackgroundTransparency = 1
+contentWindow.BackgroundTransparency = 0.35
 contentWindow.BorderSizePixel = 0
 contentWindow.ClipsDescendants = true
 contentWindow.Visible = false
@@ -828,21 +828,11 @@ local metricHistory = {
 }
 
 local metricDetails = {
-	["CPU"] = {
-		specs = "Central Processing Unit execution latency per frame on the main thread."
-	},
-	["GPU"] = {
-		specs = "Graphics Processing Unit rendering latency per frame."
-	},
-	["VRAM"] = {
-		specs = "Video RAM allocation for geometry, materials, and graphics texture buffers."
-	},
-	["RAM"] = {
-		specs = "Total System Random Access Memory allocated by the Roblox Client process."
-	},
-	["FRAMES/S"] = {
-		specs = "Real-time rendered Frames Per Second rate processed by engine pipeline."
-	}
+	["CPU"] = { specs = "Central Processing Unit execution latency per frame on the main thread." },
+	["GPU"] = { specs = "Graphics Processing Unit rendering latency per frame." },
+	["VRAM"] = { specs = "Video RAM allocation for geometry, materials, and graphics texture buffers." },
+	["RAM"] = { specs = "Total System Random Access Memory allocated by the Roblox Client process." },
+	["FRAMES/S"] = { specs = "Real-time rendered Frames Per Second rate processed by engine pipeline." }
 }
 
 local function fetchMetricValue(metric)
@@ -996,12 +986,10 @@ task.spawn(function()
 	end
 end)
 
-local HubManager = {}
 local isExpanded = false
 local isWeatherOpen = false
 local isIdle = false
 local idleTween = nil
-local activeTween = nil
 local currentCity = "New York, United States"
 local currentWeatherCode = 0
 local currentTemp = 0
@@ -1610,7 +1598,7 @@ local function updateWeatherDisplay()
 		if geoData and geoData.results and #geoData.results > 0 then
 			local lat = geoData.results[1].latitude
 			local lon = geoData.results[1].longitude
-			local weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude=" .. lat .. "&longitude=" .. lon .. "&current=temperature_2m,apparent_temperature,weather_code&hourly=temperature_2m,weather_code,precipitation_probability&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=10&timezone=auto"
+			local weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude=" .. lat .. "&longitude=" .. lon .. "&current=temperature_2m,apparent_temperature,weather_code&hourly=temperature_2m,weather_code,precipitation_probability,precipitation&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=10&timezone=auto"
 			return HttpService:JSONDecode(game:HttpGet(weatherUrl))
 		end
 	end)
@@ -1665,6 +1653,125 @@ local function updateWeatherDisplay()
 			detailsLbl.TextSize = 11
 			detailsLbl.TextXAlignment = Enum.TextXAlignment.Left
 			detailsLbl.Parent = currentFrame
+
+			local alertText = ""
+			local isSnow = false
+			if response.current and response.current.weather_code then
+				local cCode = response.current.weather_code
+				if (cCode >= 71 and cCode <= 77) or cCode == 85 or cCode == 86 then
+					isSnow = true
+				end
+			end
+
+			if response.hourly and response.hourly.weather_code and response.hourly.time then
+				local times = response.hourly.time
+				local codes = response.hourly.weather_code
+				local pops = response.hourly.precipitation_probability or {}
+				local currentTimeStr = os.date("!%Y-%m-%dT%H:00")
+				local startIdx = 1
+				for i, t in ipairs(times) do
+					if t >= currentTimeStr then startIdx = i break end
+				end
+
+				local precipStartHour = nil
+				local precipEndHour = nil
+				local maxPop = 0
+				local maxPopHours = 0
+				local hasSunToPrecip = false
+				local isHeavy = false
+
+				for i = startIdx, math.min(startIdx + 24, #codes) do
+					local code = codes[i] or 0
+					local pop = pops[i] or 0
+					if pop > maxPop then
+						maxPop = pop
+						maxPopHours = i - startIdx + 1
+					end
+
+					local isPrecip = (code >= 51 and code <= 67) or (code >= 80 and code <= 82) or (code >= 95 and code <= 99)
+					local isSnowCode = (code >= 71 and code <= 77) or code == 85 or code == 86
+					if isSnowCode then isSnow = true end
+
+					if (isPrecip or isSnowCode) and not precipStartHour then
+						local tStr = times[i] or ""
+						precipStartHour = string.match(tStr, "T(%d+:%d+)")
+					end
+
+					if precipStartHour and not (isPrecip or isSnowCode) and not precipEndHour then
+						local tStr = times[i] or ""
+						precipEndHour = string.match(tStr, "T(%d+:%d+)")
+					end
+
+					if code == 65 or code == 82 or code == 99 or code == 75 or code == 86 then
+						isHeavy = true
+					end
+
+					if i == startIdx and (codes[startIdx] == 0 or codes[startIdx] == 1) and (isPrecip or isSnowCode) then
+						hasSunToPrecip = true
+					end
+				end
+
+				if isHeavy then
+					alertText = isSnow and "Heavy snow here in a few hours" or "Heavy rain here in a few hours"
+				elseif hasSunToPrecip then
+					alertText = isSnow and ("Sun turning to snow soon in the next " .. maxPopHours .. " hours, be careful with this quick change.") or ("Sun turning to rain soon in the next " .. maxPopHours .. " hours, be careful with this quick change.")
+				elseif precipStartHour then
+					alertText = isSnow and ("Snow may start at " .. precipStartHour) or ("Rain may start at " .. precipStartHour)
+				elseif precipEndHour then
+					alertText = isSnow and ("Snow may end at " .. precipEndHour) or ("Rain may end at " .. precipEndHour)
+				elseif maxPop > 20 then
+					alertText = isSnow and ("About " .. maxPop .. "% chance of snow in the next " .. maxPopHours .. " hours, be advised.") or ("About " .. maxPop .. "% chance of rain in the next " .. maxPopHours .. " hours, be advised.")
+				end
+			end
+
+			if alertText == "" and response.daily and response.daily.temperature_2m_max and #response.daily.temperature_2m_max >= 3 then
+				local dMax = response.daily.temperature_2m_max
+				local d1 = dMax[1] or 0
+				local d3 = dMax[3] or 0
+				local diff = d3 - d1
+				if diff >= 2 then
+					alertText = "Temperature increase in the next 3 days, better use sun protection when going out and stay in shades!"
+				elseif diff <= -2 then
+					alertText = "Temperature decrease in the next 3 days, enjoy some warm sunshine in the cold!"
+				end
+			end
+
+			if alertText == "" then
+				alertText = "Winds up to 25km/h in 3 hours"
+			end
+
+			local alertCardFrame = Instance.new("Frame")
+			alertCardFrame.Name = "AlertCardFrame"
+			alertCardFrame.Size = UDim2.new(1, 0, 0, 44)
+			alertCardFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+			alertCardFrame.BorderSizePixel = 0
+			alertCardFrame.Parent = weatherScroll
+
+			local alertCardCorner = Instance.new("UICorner")
+			alertCardCorner.CornerRadius = UDim.new(0, 6)
+			alertCardCorner.Parent = alertCardFrame
+
+			local alertCardIcon = Instance.new("ImageLabel")
+			alertCardIcon.Name = "AlertCardIcon"
+			alertCardIcon.Size = UDim2.new(0, 20, 0, 20)
+			alertCardIcon.Position = UDim2.new(0, 8, 0.5, -10)
+			alertCardIcon.BackgroundTransparency = 1
+			alertCardIcon.Image = "rbxassetid://93196074526983"
+			alertCardIcon.Parent = alertCardFrame
+
+			local alertCardLabel = Instance.new("TextLabel")
+			alertCardLabel.Name = "AlertCardLabel"
+			alertCardLabel.Size = UDim2.new(1, -38, 1, -6)
+			alertCardLabel.Position = UDim2.new(0, 34, 0, 3)
+			alertCardLabel.BackgroundTransparency = 1
+			alertCardLabel.Font = Enum.Font.Code
+			alertCardLabel.Text = alertText
+			alertCardLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
+			alertCardLabel.TextSize = 10
+			alertCardLabel.TextWrapped = true
+			alertCardLabel.TextXAlignment = Enum.TextXAlignment.Left
+			alertCardLabel.TextYAlignment = Enum.TextYAlignment.Center
+			alertCardLabel.Parent = alertCardFrame
 
 			if response.hourly and response.hourly.time then
 				local hourlyCardFrame = Instance.new("Frame")
@@ -1845,39 +1952,39 @@ local function updateWeatherDisplay()
 					dateLbl.Position = UDim2.new(0, 0, 0, 2)
 					dateLbl.BackgroundTransparency = 1
 					dateLbl.Font = Enum.Font.Code
-					dateLbl.Text = (dayIdx == 1) and "Today" or formattedDate
+					dateLbl.Text = formattedDate
 					dateLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
 					dateLbl.TextSize = 10
 					dateLbl.Parent = dayBtn
 
-					local icon = Instance.new("ImageLabel")
-					icon.Size = UDim2.new(0, 20, 0, 20)
-					icon.Position = UDim2.new(0.5, -10, 0, 18)
-					icon.BackgroundTransparency = 1
-					icon.Image = getWeatherAsset(dCodes[dayIdx])
-					icon.Parent = dayBtn
+					local dIcon = Instance.new("ImageLabel")
+					dIcon.Size = UDim2.new(0, 20, 0, 20)
+					dIcon.Position = UDim2.new(0.5, -10, 0, 18)
+					dIcon.BackgroundTransparency = 1
+					dIcon.Image = getWeatherAsset(dCodes[dayIdx] or 0)
+					dIcon.Parent = dayBtn
 
-					local popVal = dPops[dayIdx] or 0
-					local popLbl = Instance.new("TextLabel")
-					popLbl.Size = UDim2.new(1, 0, 0, 12)
-					popLbl.Position = UDim2.new(0, 0, 0, 40)
-					popLbl.BackgroundTransparency = 1
-					popLbl.Font = Enum.Font.Code
-					popLbl.Text = popVal .. "%"
-					popLbl.TextColor3 = Color3.fromRGB(100, 200, 255)
-					popLbl.TextSize = 9
-					popLbl.Parent = dayBtn
+					local dPopLbl = Instance.new("TextLabel")
+					dPopLbl.Size = UDim2.new(1, 0, 0, 12)
+					dPopLbl.Position = UDim2.new(0, 0, 0, 40)
+					dPopLbl.BackgroundTransparency = 1
+					dPopLbl.Font = Enum.Font.Code
+					dPopLbl.Text = (dPops[dayIdx] or 0) .. "%"
+					dPopLbl.TextColor3 = Color3.fromRGB(100, 200, 255)
+					dPopLbl.TextSize = 9
+					dPopLbl.Parent = dayBtn
 
-					local rangeLbl = Instance.new("TextLabel")
-					rangeLbl.Size = UDim2.new(1, 0, 0, 24)
-					rangeLbl.Position = UDim2.new(0, 0, 0, 54)
-					rangeLbl.BackgroundTransparency = 1
-					rangeLbl.Font = Enum.Font.Code
-					rangeLbl.Text = math.floor(minTemps[dayIdx] + 0.5) .. "° / " .. math.floor(maxTemps[dayIdx] + 0.5) .. "°"
-					rangeLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-					rangeLbl.TextSize = 10
-					rangeLbl.TextWrapped = true
-					rangeLbl.Parent = dayBtn
+					local dTempLbl = Instance.new("TextLabel")
+					dTempLbl.Size = UDim2.new(1, 0, 0, 14)
+					dTempLbl.Position = UDim2.new(0, 0, 0, 54)
+					dTempLbl.BackgroundTransparency = 1
+					dTempLbl.Font = Enum.Font.Code
+					local minT = minTemps[dayIdx] and math.floor(minTemps[dayIdx] + 0.5) or "--"
+					local maxT = maxTemps[dayIdx] and math.floor(maxTemps[dayIdx] + 0.5) or "--"
+					dTempLbl.Text = minT .. "°/" .. maxT .. "°"
+					dTempLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+					dTempLbl.TextSize = 9
+					dTempLbl.Parent = dayBtn
 
 					dayBtn.MouseButton1Click:Connect(function()
 						openDayDetail(dayIdx, formattedDate, response)
@@ -1885,386 +1992,263 @@ local function updateWeatherDisplay()
 				end
 				dScroll.CanvasSize = UDim2.new(0, #days * (itemWidth + 6), 0, 0)
 			end
-
-			weatherScroll.CanvasSize = UDim2.new(0, 0, 0, 285)
 		end
 	end
 end
+
+searchBox.FocusLost:Connect(function(enterPressed)
+	if enterPressed and searchBox.Text ~= "" then
+		currentCity = searchBox.Text
+		saveCurrentLocation(currentCity)
+		searchBox.Text = ""
+		updateWeatherDisplay()
+	end
+end)
 
 task.spawn(function()
 	while true do
-		pcall(updateWeatherDisplay)
-		task.wait(600)
+		updateWeatherDisplay()
+		task.wait(300)
 	end
 end)
-task.spawn(updateWeatherDisplay)
 
-function HubManager:Setup(data)
-	if data.title then titleLabel.Text = data.title end
-	if data.imageId then buttonImage.Image = data.imageId end
-	if data.onExecute then executeButton.MouseButton1Click:Connect(data.onExecute) end
-end
-
-local function toggleMain(expand, weather)
-	isExpanded = expand
-	isWeatherOpen = weather
-	isIdle = false
-	if idleTween then idleTween:Cancel() end
-	if activeTween then activeTween:Cancel() end
-	
-	actionButton.Visible = not expand
-	pingImage.Visible = not expand
-	weatherContainer.Visible = not expand
-	appsScroll.Visible = not expand
-	monButton.Visible = not expand
-	plusButton.Visible = not expand
-	trendingButton.Visible = not expand
-	
-	topBar.Visible = expand
-	codeBox.Visible = expand and not weather
-	controlPanel.Visible = expand and not weather
-	weatherMainFrame.Visible = expand and weather
-	
-	if not expand then
-		appCreatorMain.Visible = false
-		folderMain.Visible = false
-		scriptMain.Visible = false
-		renameMain.Visible = false
-		contextMenu.Visible = false
-		deleteAppMenu.Visible = false
-		trendingMainFrame.Visible = false
-		executeConfirmFrame.Visible = false
-		dayDetailFrame.Visible = false
-		weatherScroll.Visible = true
-		searchBox.Visible = true
-	end
-	
-	if weather then titleLabel.Text = "WEATHER: " .. currentCity end
-	
-	local tInfo = TweenInfo.new(0.4, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
-	
-	local targetSize = expand and expandedSize or collapsedSize
-	local targetPos = expand and expandedPosition or collapsedPosition
-	
-	activeTween = TweenService:Create(mainFrame, tInfo, {
-		Size = targetSize,
-		Position = targetPos,
-		BackgroundTransparency = expand and 0 or 0.35
-	})
-	local cTween = TweenService:Create(mainCorner, tInfo, {CornerRadius = UDim.new(0, expand and 6 or 8)})
-	
-	local contentTween = TweenService:Create(contentWindow, tInfo, {
-		Size = targetSize,
-		Position = targetPos
-	})
-	
-	if expand then
-		contentWindow.Size = collapsedSize
-		contentWindow.Position = collapsedPosition
-		contentWindow.Visible = true
-	end
-	
-	activeTween:Play()
-	cTween:Play()
-	contentTween:Play()
-	
-	if expand and weather then task.spawn(updateWeatherDisplay) end
-	if not expand then
-		contentTween.Completed:Connect(function()
-			if not isExpanded then contentWindow.Visible = false end
-		end)
-		resetIdleTimer() 
-		titleLabel.Text = "Apps Protection" 
-	end
-end
-
-actionButton.MouseButton1Click:Connect(function() if not isExpanded then toggleMain(true, false) end end)
-weatherContainer.MouseButton1Click:Connect(function() if not isExpanded then toggleMain(true, true) end end)
-closeButton.MouseButton1Click:Connect(function() if isExpanded then toggleMain(false, false) end end)
-
-trendingButton.MouseButton1Click:Connect(function()
-	if not isExpanded then toggleMain(true, false) end
+local function hideAllViews()
 	codeBox.Visible = false
 	controlPanel.Visible = false
 	weatherMainFrame.Visible = false
+	trendingMainFrame.Visible = false
+	executeConfirmFrame.Visible = false
 	appCreatorMain.Visible = false
 	folderMain.Visible = false
 	scriptMain.Visible = false
-	executeConfirmFrame.Visible = false
+end
+
+local function showMainHubView()
+	hideAllViews()
+	codeBox.Visible = true
+	controlPanel.Visible = true
+	topBar.Visible = true
+	titleLabel.Text = "Apps Protection - Executor"
+end
+
+weatherContainer.MouseButton1Click:Connect(function()
+	if not contentWindow.Visible then
+		contentWindow.Visible = true
+		topBar.Visible = true
+	end
+	hideAllViews()
+	isWeatherOpen = true
+	weatherMainFrame.Visible = true
+	dayDetailFrame.Visible = false
+	weatherScroll.Visible = true
+	searchBox.Visible = true
+	titleLabel.Text = "Weather Forecast - " .. currentCity
+	updateWeatherDisplay()
+end)
+
+local trendingScripts = {
+	{name = "Infinite Yield", icon = "rbxassetid://6031075931", code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()'},
+	{name = "Dex Explorer", icon = "rbxassetid://6031075931", code = 'loadstring(game:HttpGet("https://cdn.wearedevs.net/scripts/Dex%20Explorer.txt"))()'},
+	{name = "Remote Spy", icon = "rbxassetid://6031075931", code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ex-ser/SimpleSpy/main/SimpleSpySource.lua"))()'},
+	{name = "Fly Script", icon = "rbxassetid://6031075931", code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOK/FlyScript/main/Script"))()'}
+}
+
+local function populateTrending()
+	for _, c in ipairs(trendingScroll:GetChildren()) do
+		if c:IsA("Frame") or c:IsA("TextButton") then c:Destroy() end
+	end
+	for _, sc in ipairs(trendingScripts) do
+		local card = Instance.new("Frame")
+		card.Size = UDim2.new(1, 0, 0, 36)
+		card.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+		card.BorderSizePixel = 0
+		card.Parent = trendingScroll
+
+		local cardCorner = Instance.new("UICorner")
+		cardCorner.CornerRadius = UDim.new(0, 6)
+		cardCorner.Parent = card
+
+		local lbl = Instance.new("TextLabel")
+		lbl.Size = UDim2.new(1, -90, 1, 0)
+		lbl.Position = UDim2.new(0, 10, 0, 0)
+		lbl.BackgroundTransparency = 1
+		lbl.Font = Enum.Font.Code
+		lbl.Text = sc.name
+		lbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+		lbl.TextSize = 12
+		lbl.TextXAlignment = Enum.TextXAlignment.Left
+		lbl.Parent = card
+
+		local execBtn = createButton("ExecBtn", "Load", Color3.fromRGB(30, 80, 30))
+		execBtn.Size = UDim2.new(0, 70, 0, 26)
+		execBtn.Position = UDim2.new(1, -76, 0.5, -13)
+		execBtn.Parent = card
+
+		execBtn.MouseButton1Click:Connect(function()
+			pendingCode = sc.code
+			hideAllViews()
+			executeConfirmFrame.Visible = true
+			ecTextBox.Text = pendingCode
+			titleLabel.Text = "Confirm Script Execution: " .. sc.name
+		end)
+	end
+	trendingScroll.CanvasSize = UDim2.new(0, 0, 0, #trendingScripts * 42)
+end
+
+trendingButton.MouseButton1Click:Connect(function()
+	if not contentWindow.Visible then
+		contentWindow.Visible = true
+		topBar.Visible = true
+	end
+	hideAllViews()
 	trendingMainFrame.Visible = true
 	titleLabel.Text = "Trending Scripts"
-	
-	task.spawn(function()
-		for _, c in ipairs(trendingScroll:GetChildren()) do
-			if c:IsA("TextButton") then c:Destroy() end
-		end
-		local success, response = pcall(function()
-			return game:HttpGet("https://scriptblox.com/api/script/trending")
-		end)
-		if success and response then
-			local data = HttpService:JSONDecode(response)
-			if data and data.result and data.result.scripts then
-				local scripts = data.result.scripts
-				local filtered = {}
-				for _, s in ipairs(scripts) do
-					local isVer = (s.verified == true or s.verified == 1)
-					local isPat = (s.isPatched == true or s.isPatched == 1)
-					if isVer and not isPat then
-						table.insert(filtered, s)
-					end
-				end
-				table.sort(filtered, function(a, b)
-					return (a.views or 0) > (b.views or 0)
-				end)
-				local count = 0
-				for _, s in ipairs(filtered) do
-					count = count + 1
-					if count > 10 then break end
-					
-					local scriptBtn = Instance.new("TextButton")
-					scriptBtn.Size = UDim2.new(1, 0, 0, 52)
-					scriptBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-					scriptBtn.BorderSizePixel = 0
-					scriptBtn.Text = ""
-					scriptBtn.AutoButtonColor = true
-					scriptBtn.Parent = trendingScroll
-					
-					local sCorner = Instance.new("UICorner")
-					sCorner.CornerRadius = UDim.new(0, 6)
-					sCorner.Parent = scriptBtn
-					
-					local titleLbl = Instance.new("TextLabel")
-					titleLbl.Size = UDim2.new(1, -120, 0, 24)
-					titleLbl.Position = UDim2.new(0, 10, 0, 4)
-					titleLbl.BackgroundTransparency = 1
-					titleLbl.Font = Enum.Font.Code
-					titleLbl.Text = s.title or "Unknown"
-					titleLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-					titleLbl.TextSize = 12
-					titleLbl.TextXAlignment = Enum.TextXAlignment.Left
-					titleLbl.Parent = scriptBtn
-					
-					local gameLbl = Instance.new("TextLabel")
-					gameLbl.Size = UDim2.new(1, -120, 0, 20)
-					gameLbl.Position = UDim2.new(0, 10, 0, 26)
-					gameLbl.BackgroundTransparency = 1
-					gameLbl.Font = Enum.Font.Code
-					gameLbl.Text = (s.game and s.game.name) or "Unknown Game"
-					gameLbl.TextColor3 = Color3.fromRGB(180, 180, 180)
-					gameLbl.TextSize = 11
-					gameLbl.TextXAlignment = Enum.TextXAlignment.Left
-					gameLbl.Parent = scriptBtn
-					
-					local tagX = -10
-					if s.verified == true or s.verified == 1 then
-						local tag = Instance.new("TextLabel")
-						tag.Size = UDim2.new(0, 60, 0, 18)
-						tag.Position = UDim2.new(1, tagX - 60, 0.5, -9)
-						tag.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
-						tag.BackgroundTransparency = 0.8
-						tag.Font = Enum.Font.Code
-						tag.Text = "Verified"
-						tag.TextColor3 = Color3.fromRGB(0, 255, 255)
-						tag.TextSize = 10
-						tag.Parent = scriptBtn
-						local tc = Instance.new("UICorner")
-						tc.CornerRadius = UDim.new(0, 4)
-						tc.Parent = tag
-						tagX = tagX - 65
-					end
-					if s.key == true or s.key == 1 then
-						local tag = Instance.new("TextLabel")
-						tag.Size = UDim2.new(0, 65, 0, 18)
-						tag.Position = UDim2.new(1, tagX - 65, 0.5, -9)
-						tag.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
-						tag.BackgroundTransparency = 0.8
-						tag.Font = Enum.Font.Code
-						tag.Text = "With Key"
-						tag.TextColor3 = Color3.fromRGB(255, 255, 0)
-						tag.TextSize = 10
-						tag.Parent = scriptBtn
-						local tc = Instance.new("UICorner")
-						tc.CornerRadius = UDim.new(0, 4)
-						tc.Parent = tag
-						tagX = tagX - 70
-					end
-					
-					scriptBtn.MouseButton1Click:Connect(function()
-						local codeToExec = ""
-						pcall(function()
-							local res = game:HttpGet("https://scriptblox.com/api/script/" .. (s.slug or s._id))
-							local dec = HttpService:JSONDecode(res)
-							if dec and dec.script and dec.script.script then
-								codeToExec = dec.script.script
-							elseif s.script then
-								codeToExec = s.script
-							end
-						end)
-						pendingCode = codeToExec
-						ecTextBox.Text = "The code is \"" .. codeToExec .. "\", are you sure wanna execute this"
-						trendingMainFrame.Visible = false
-						executeConfirmFrame.Visible = true
-						titleLabel.Text = "Confirm Execution"
-					end)
-				end
-				trendingScroll.CanvasSize = UDim2.new(0, 0, 0, count * 58)
-			end
-		end
-	end)
+	populateTrending()
 end)
 
 ecNevermind.MouseButton1Click:Connect(function()
-	executeConfirmFrame.Visible = false
-	trendingMainFrame.Visible = true
-	titleLabel.Text = "Trending Scripts"
+	showMainHubView()
 end)
 
 ecOkay.MouseButton1Click:Connect(function()
-	if pendingCode ~= "" then
-		local sf, ff = pcall(loadstring, pendingCode)
-		if sf and type(ff) == "function" then
-			pcall(ff)
-		end
+	if ecTextBox.Text ~= "" then
+		local f = loadstring(ecTextBox.Text)
+		if f then pcall(f) end
 	end
-	executeConfirmFrame.Visible = false
-	toggleMain(false, false)
-end)
-
-searchBox.FocusLost:Connect(function(ep)
-	if ep and searchBox.Text ~= "" then
-		currentCity = searchBox.Text
-		saveCurrentLocation(currentCity)
-		titleLabel.Text = "WEATHER: " .. currentCity
-		task.spawn(updateWeatherDisplay)
-	end
-end)
-
-executeButton.MouseButton1Click:Connect(function()
-	if codeBox.Text ~= "" then
-		local s, f = pcall(loadstring, codeBox.Text)
-		if s and type(f) == "function" then pcall(f) end
-	end
-end)
-
-clearButton.MouseButton1Click:Connect(function() codeBox.Text = "" end)
-pasteButton.MouseButton1Click:Connect(function()
-	pcall(function()
-		local c = getclipboard and getclipboard() or (syn and syn.get_clipboard and syn.get_clipboard()) or (Clipboard and Clipboard.get and Clipboard.get()) or ""
-		if c ~= "" then codeBox.Text = tostring(c) end
-	end)
-end)
-
-local function closeMenus()
-	if contextMenu.Visible then contextMenu.Visible = false end
-	if deleteAppMenu.Visible then deleteAppMenu.Visible = false end
-end
-
-mainFrame.InputBegan:Connect(function(inp)
-	if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then 
-		resetIdleTimer() 
-		closeMenus()
-	end
-end)
-
-contentWindow.InputBegan:Connect(function(inp)
-	if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then 
-		closeMenus()
-	end
+	showMainHubView()
 end)
 
 plusButton.MouseButton1Click:Connect(function()
-	if not isExpanded then toggleMain(true, false) end
-	codeBox.Visible = false
-	controlPanel.Visible = false
-	weatherMainFrame.Visible = false
+	if not contentWindow.Visible then
+		contentWindow.Visible = true
+		topBar.Visible = true
+	end
+	hideAllViews()
 	appCreatorMain.Visible = true
-	
+	titleLabel.Text = "App Creator"
 	currentAppStruct = {
-		type = "Folder",
 		name = "Main_App",
-		children = {
-			{
-				type = "Script",
-				name = "ClientScript",
-				source = "Main_App.ClientScript:read()"
-			}
-		}
+		type = "Folder",
+		children = {}
 	}
-	acNameInput.Text = ""
-	acImageInput.Text = ""
 end)
 
 acFolderBtn.MouseButton1Click:Connect(function()
-	updateFolderUI()
-	appCreatorMain.Visible = false
+	hideAllViews()
 	folderMain.Visible = true
+	titleLabel.Text = "Configure App Structure"
+	updateFolderUI()
+end)
+
+acCreateBtn.MouseButton1Click:Connect(function()
+	local appName = acNameInput.Text ~= "" and acNameInput.Text or "New App"
+	local iconId = acImageInput.Text ~= "" and ("rbxassetid://" .. acImageInput.Text) or "rbxassetid://131431650384842"
+	
+	local newApp = {
+		appName = appName,
+		appIcon = iconId,
+		structure = currentAppStruct or {
+			name = "Main_App",
+			type = "Folder",
+			children = {}
+		}
+	}
+	table.insert(appsData, newApp)
+	saveApps()
+	refreshAppsUI()
+	
+	acNameInput.Text = ""
+	acImageInput.Text = ""
+	showMainHubView()
 end)
 
 fmBack.MouseButton1Click:Connect(function()
-	folderMain.Visible = false
+	hideAllViews()
 	appCreatorMain.Visible = true
-end)
-
-smNevermind.MouseButton1Click:Connect(function()
-	scriptMain.Visible = false
-	folderMain.Visible = true
+	titleLabel.Text = "App Creator"
 end)
 
 smSave.MouseButton1Click:Connect(function()
 	if currentEditingNode then
 		currentEditingNode.source = smTextBox.Text
 	end
-	scriptMain.Visible = false
+	hideAllViews()
 	folderMain.Visible = true
+	titleLabel.Text = "Configure App Structure"
+	updateFolderUI()
 end)
 
-local function removeNode(node, targetNode)
-	if node.children then
-		for i, child in ipairs(node.children) do
-			if child == targetNode then
-				table.remove(node.children, i)
-				return true
-			else
-				if removeNode(child, targetNode) then return true end
-			end
-		end
-	end
-	return false
-end
+smNevermind.MouseButton1Click:Connect(function()
+	hideAllViews()
+	folderMain.Visible = true
+	titleLabel.Text = "Configure App Structure"
+	updateFolderUI()
+end)
 
 cmBtn1.MouseButton1Click:Connect(function()
 	contextMenu.Visible = false
-	renameMain.Visible = true
-	if contextType == "Main" then
-		rmInput.Text = "ClientScript"
-		currentEditingNode = {type = "Script"}
-	else
+	if contextType == "Main" and contextTarget then
+		local newScript = {
+			name = "ClientScript",
+			type = "Script",
+			source = "print('Hello from ClientScript!')"
+		}
+		table.insert(contextTarget.children, newScript)
+		updateFolderUI()
+	elseif contextType == "Normal" and contextTarget then
+		currentEditingNode = contextTarget
+		renameMain.Visible = true
 		rmInput.Text = contextTarget.name
-		currentEditingNode = "Rename"
 	end
 end)
 
 cmBtn2.MouseButton1Click:Connect(function()
 	contextMenu.Visible = false
-	if contextType == "Main" then
-		renameMain.Visible = true
-		rmInput.Text = "Folder"
-		currentEditingNode = {type = "Folder"}
-	else
-		if contextTarget.name ~= "Main_App" then
-			removeNode(currentAppStruct, contextTarget)
-			updateFolderUI()
+	if contextType == "Main" and contextTarget then
+		local newFolder = {
+			name = "NewFolder",
+			type = "Folder",
+			children = {}
+		}
+		table.insert(contextTarget.children, newFolder)
+		updateFolderUI()
+	elseif contextType == "Normal" and contextTarget then
+		local function removeFrom(node, target)
+			if not node.children then return end
+			for i, child in ipairs(node.children) do
+				if child == target then
+					table.remove(node.children, i)
+					return true
+				elseif child.type == "Folder" then
+					if removeFrom(child, target) then return true end
+				end
+			end
 		end
+		removeFrom(currentAppStruct, contextTarget)
+		updateFolderUI()
 	end
+end)
+
+rmClose.MouseButton1Click:Connect(function()
+	renameMain.Visible = false
+end)
+
+rmSave.MouseButton1Click:Connect(function()
+	if currentEditingNode and rmInput.Text ~= "" then
+		currentEditingNode.name = rmInput.Text
+	end
+	renameMain.Visible = false
+	updateFolderUI()
 end)
 
 damBtn.MouseButton1Click:Connect(function()
 	deleteAppMenu.Visible = false
-	if contextTarget then
-		local appData = appsData[contextTarget]
-		terminateApp(appData)
+	if contextTarget and appsData[contextTarget] then
+		local app = appsData[contextTarget]
+		terminateApp(app)
 		if contextTargetBtn then
-			playExplosionEffect(contextTargetBtn.AbsolutePosition, appData.appIcon ~= "" and appData.appIcon or nil)
+			local pos = contextTargetBtn.AbsolutePosition
+			playExplosionEffect(pos, app.appIcon)
 		end
 		table.remove(appsData, contextTarget)
 		saveApps()
@@ -2272,46 +2256,61 @@ damBtn.MouseButton1Click:Connect(function()
 	end
 end)
 
-rmClose.MouseButton1Click:Connect(function() renameMain.Visible = false end)
-rmSave.MouseButton1Click:Connect(function()
-	if rmInput.Text ~= "" then
-		if currentEditingNode == "Rename" then
-			if contextTarget.name ~= "Main_App" then
-				contextTarget.name = rmInput.Text
+UserInputService.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		local p = input.Position
+		if contextMenu.Visible then
+			local pos = contextMenu.AbsolutePosition
+			local sz = contextMenu.AbsoluteSize
+			if p.X < pos.X or p.X > pos.X + sz.X or p.Y < pos.Y or p.Y > pos.Y + sz.Y then
+				contextMenu.Visible = false
 			end
-		else
-			currentEditingNode.name = rmInput.Text
-			if currentEditingNode.type == "Folder" then
-				currentEditingNode.children = {}
-			else
-				currentEditingNode.source = " "
-			end
-			if not contextTarget.children then contextTarget.children = {} end
-			table.insert(contextTarget.children, currentEditingNode)
 		end
-		updateFolderUI()
+		if deleteAppMenu.Visible then
+			local pos = deleteAppMenu.AbsolutePosition
+			local sz = deleteAppMenu.AbsoluteSize
+			if p.X < pos.X or p.X > pos.X + sz.X or p.Y < pos.Y or p.Y > pos.Y + sz.Y then
+				deleteAppMenu.Visible = false
+			end
+		end
 	end
-	renameMain.Visible = false
 end)
 
-acCreateBtn.MouseButton1Click:Connect(function()
-	if acNameInput.Text ~= "" and #appsData < 10 then
-		local icon = acImageInput.Text
-		if icon == "" then
-			icon = "rbxassetid://1180538928644888"
-		elseif not string.match(icon, "rbxassetid://") then
-			icon = "rbxassetid://" .. icon
-		end
-		table.insert(appsData, {
-			appName = acNameInput.Text,
-			appIcon = icon,
-			structure = currentAppStruct
-		})
-		saveApps()
-		refreshAppsUI()
-		appCreatorMain.Visible = false
-		toggleMain(false, false)
+executeButton.MouseButton1Click:Connect(function()
+	if codeBox.Text ~= "" then
+		local f = loadstring(codeBox.Text)
+		if f then pcall(f) end
 	end
+end)
+
+clearButton.MouseButton1Click:Connect(function()
+	codeBox.Text = ""
+end)
+
+pasteButton.MouseButton1Click:Connect(function()
+	if getclipboard then
+		pcall(function() codeBox.Text = getclipboard() end)
+	end
+end)
+
+actionButton.MouseButton1Click:Connect(function()
+	isExpanded = not isExpanded
+	if isExpanded then
+		contentWindow.Visible = true
+		showMainHubView()
+		mainFrame:TweenSizeAndPosition(expandedSize, expandedPosition, Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.3, true)
+	else
+		contentWindow.Visible = false
+		mainFrame:TweenSizeAndPosition(collapsedSize, collapsedPosition, Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.3, true)
+		resetIdleTimer()
+	end
+end)
+
+closeButton.MouseButton1Click:Connect(function()
+	isExpanded = false
+	contentWindow.Visible = false
+	mainFrame:TweenSizeAndPosition(collapsedSize, collapsedPosition, Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.3, true)
+	resetIdleTimer()
 end)
 
 refreshAppsUI()
