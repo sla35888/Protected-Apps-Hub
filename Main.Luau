@@ -15,7 +15,7 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "OptimizedHubGui"
 screenGui.IgnoreGuiInset = true
 screenGui.ResetOnSpawn = false
-screenGui.DisplayOrder = 999999999999999999999999
+screenGui.DisplayOrder = 2147483647
 screenGui.Parent = CoreGui
 
 local mainFrame = Instance.new("Frame")
@@ -142,8 +142,8 @@ pingImage.Parent = mainFrame
 
 local weatherContainer = Instance.new("TextButton")
 weatherContainer.Name = "WeatherContainer"
-weatherContainer.Size = UDim2.new(0, 60, 1, 0)
-weatherContainer.Position = UDim2.new(1, -64, 0, 0)
+weatherContainer.Size = UDim2.new(0, 65, 1, 0)
+weatherContainer.Position = UDim2.new(1, -68, 0, 0)
 weatherContainer.BackgroundTransparency = 1
 weatherContainer.Text = ""
 weatherContainer.AutoButtonColor = false
@@ -151,16 +151,16 @@ weatherContainer.Parent = mainFrame
 
 local weatherIcon = Instance.new("ImageLabel")
 weatherIcon.Name = "WeatherIcon"
-weatherIcon.Size = UDim2.new(0, 20, 0, 20)
-weatherIcon.Position = UDim2.new(0, 0, 0.5, -10)
+weatherIcon.Size = UDim2.new(0, 18, 0, 18)
+weatherIcon.Position = UDim2.new(0, 0, 0, 4)
 weatherIcon.BackgroundTransparency = 1
 weatherIcon.Image = "rbxassetid://82410735894036"
 weatherIcon.Parent = weatherContainer
 
 local weatherLabel = Instance.new("TextLabel")
 weatherLabel.Name = "WeatherLabel"
-weatherLabel.Size = UDim2.new(0, 30, 1, 0)
-weatherLabel.Position = UDim2.new(0, 24, 0, 0)
+weatherLabel.Size = UDim2.new(0, 40, 0, 18)
+weatherLabel.Position = UDim2.new(0, 20, 0, 4)
 weatherLabel.BackgroundTransparency = 1
 weatherLabel.Font = Enum.Font.Code
 weatherLabel.Text = "--°"
@@ -168,6 +168,18 @@ weatherLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
 weatherLabel.TextSize = 12
 weatherLabel.TextXAlignment = Enum.TextXAlignment.Left
 weatherLabel.Parent = weatherContainer
+
+local weatherNameLabel = Instance.new("TextLabel")
+weatherNameLabel.Name = "WeatherNameLabel"
+weatherNameLabel.Size = UDim2.new(1, 0, 0, 16)
+weatherNameLabel.Position = UDim2.new(0, 0, 0, 22)
+weatherNameLabel.BackgroundTransparency = 1
+weatherNameLabel.Font = Enum.Font.Code
+weatherNameLabel.Text = "Clear"
+weatherNameLabel.TextColor3 = Color3.fromRGB(160, 160, 160)
+weatherNameLabel.TextSize = 8
+weatherNameLabel.TextXAlignment = Enum.TextXAlignment.Left
+weatherNameLabel.Parent = weatherContainer
 
 local topBar = Instance.new("Frame")
 topBar.Name = "TopBar"
@@ -370,7 +382,7 @@ detailTitle.Size = UDim2.new(1, -60, 1, 0)
 detailTitle.Position = UDim2.new(0, 60, 0, 0)
 detailTitle.BackgroundTransparency = 1
 detailTitle.Font = Enum.Font.Code
-detailTitle.Text = "Hourly Forecast"
+detailTitle.Text = "Forecast"
 detailTitle.TextColor3 = Color3.fromRGB(200, 200, 200)
 detailTitle.TextSize = 12
 detailTitle.TextXAlignment = Enum.TextXAlignment.Left
@@ -1379,13 +1391,87 @@ local function getWeatherAsset(code)
 	elseif code == 51 or code == 53 or code == 55 then return "rbxassetid://112276281424544"
 	elseif code >= 61 and code <= 63 then return "rbxassetid://121339017688218"
 	elseif code == 65 then return "rbxassetid://96332226552349"
-	elseif code >= 71 and code <= 77 then return "rbxassetid://121339017688218"
+	elseif code == 71 or code == 85 then return "rbxassetid://99523745600553"
+	elseif code == 73 or code == 77 then return "rbxassetid://136138054838480"
+	elseif code == 75 or code == 86 then return "rbxassetid://118529329051945"
 	elseif code == 80 then return "rbxassetid://126410542264413"
 	elseif code >= 81 and code <= 82 then return "rbxassetid://96332226552349"
 	elseif code == 95 then return "rbxassetid://77207049898483"
 	elseif code == 96 or code == 99 then return "rbxassetid://118053892864488"
 	else return "rbxassetid://82410735894036"
 	end
+end
+
+local function getWeatherName(code)
+	if code == 0 then return "Clear"
+	elseif code == 1 then return "Mainly Clear"
+	elseif code == 2 then return "Partly Cloudy"
+	elseif code == 3 then return "Overcast"
+	elseif code >= 45 and code <= 48 then return "Foggy"
+	elseif code == 51 or code == 53 or code == 55 then return "Drizzle"
+	elseif code >= 61 and code <= 63 then return "Rain"
+	elseif code == 65 then return "Heavy Rain"
+	elseif code == 71 then return "Light Snow"
+	elseif code == 73 or code == 77 then return "Snow"
+	elseif code == 75 then return "Heavy Snow"
+	elseif code == 80 then return "Rain Showers"
+	elseif code >= 81 and code <= 82 then return "Heavy Showers"
+	elseif code == 85 or code == 86 then return "Snow Showers"
+	elseif code == 95 then return "Thunderstorm"
+	elseif code == 96 or code == 99 then return "Thunderstorm"
+	else return "Clear"
+	end
+end
+
+local function getDynamicWarning(response)
+	local isSnow = false
+	local precipType = "Rain"
+	if response and response.current and response.current.weather_code then
+		local c = response.current.weather_code
+		if (c >= 71 and c <= 77) or (c >= 85 and c <= 86) then
+			isSnow = true
+			precipType = "Snow"
+		end
+	end
+
+	if response and response.hourly and response.hourly.weather_code and response.hourly.time then
+		local codes = response.hourly.weather_code
+		local times = response.hourly.time
+		for i = 1, math.min(24, #codes) do
+			local code = codes[i]
+			if code == 95 or code == 96 or code == 99 then
+				local tStr = times[i] or ""
+				local timeOnly = string.match(tStr, "T(%d+:%d+)") or "12:00"
+				return "Chance of clouds with lightning at " .. timeOnly
+			elseif code == 65 or code == 75 then
+				local tStr = times[i] or ""
+				local timeOnly = string.match(tStr, "T(%d+:%d+)") or "12:00"
+				return "Heavy Chance of " .. precipType .. " at " .. timeOnly
+			elseif code == 53 or code == 55 or code == 56 or code == 63 or code == 73 then
+				local tStr = times[i] or ""
+				local timeOnly = string.match(tStr, "T(%d+:%d+)") or "12:00"
+				return "Moderate Chance of " .. precipType .. " at " .. timeOnly
+			elseif (code >= 51 and code <= 53) or (code >= 61 and code <= 63) or (code >= 71 and code <= 73) then
+				local tStr = times[i] or ""
+				local timeOnly = string.match(tStr, "T(%d+:%d+)") or "12:00"
+				return "Chance of " .. precipType .. " at " .. timeOnly
+			end
+		end
+	end
+
+	if response and response.daily and response.daily.temperature_2m_max then
+		local maxs = response.daily.temperature_2m_max
+		if #maxs >= 5 then
+			local diff = math.floor((maxs[5] - maxs[1]) + 0.5)
+			if diff > 2 then
+				return "The temperature will increase by about " .. math.abs(diff) .. " degrees in the next 5 days"
+			elseif diff < -2 then
+				return "The temperature will decrease by about " .. math.abs(diff) .. " degrees in the next 5 days"
+			end
+		end
+	end
+
+	return "No clouds or few clouds in the next 12 hours"
 end
 
 local function openDayDetail(dayIdx, dateTitle, response)
@@ -1402,64 +1488,65 @@ local function openDayDetail(dayIdx, dateTitle, response)
 	local codes = response.hourly.weather_code
 	local pops = response.hourly.precipitation_probability or {}
 
-	local startHourIndex = (dayIdx - 1) * 24 + 1
-	local endHourIndex = math.min(dayIdx * 24, #times)
-
-	local itemWidth = 52
+	local dayStart = (dayIdx - 1) * 24
+	local representativeHours = {6, 12, 18, 21}
+	local itemWidth = 65
 	local count = 0
 
-	for i = startHourIndex, endHourIndex do
-		count = count + 1
-		local tStr = times[i] or ""
-		local hStr = string.match(tStr, "T(%d+:%d+)") or string.format("%02d:00", count - 1)
+	for _, hOffset in ipairs(representativeHours) do
+		local i = dayStart + hOffset + 1
+		if i <= #times then
+			count = count + 1
+			local periodName = hOffset == 6 and "Morning" or (hOffset == 12 and "Afternoon" or (hOffset == 18 and "Evening" or "Night"))
 
-		local item = Instance.new("Frame")
-		item.Size = UDim2.new(0, itemWidth, 1, -10)
-		item.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-		item.BorderSizePixel = 0
-		item.Parent = detailScroll
+			local item = Instance.new("Frame")
+			item.Size = UDim2.new(0, itemWidth, 1, -10)
+			item.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+			item.BorderSizePixel = 0
+			item.Parent = detailScroll
 
-		local itCorner = Instance.new("UICorner")
-		itCorner.CornerRadius = UDim.new(0, 4)
-		itCorner.Parent = item
+			local itCorner = Instance.new("UICorner")
+			itCorner.CornerRadius = UDim.new(0, 4)
+			itCorner.Parent = item
 
-		local timeLbl = Instance.new("TextLabel")
-		timeLbl.Size = UDim2.new(1, 0, 0, 16)
-		timeLbl.Position = UDim2.new(0, 0, 0, 4)
-		timeLbl.BackgroundTransparency = 1
-		timeLbl.Font = Enum.Font.Code
-		timeLbl.Text = hStr
-		timeLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
-		timeLbl.TextSize = 10
-		timeLbl.Parent = item
+			local timeLbl = Instance.new("TextLabel")
+			timeLbl.Size = UDim2.new(1, 0, 0, 16)
+			timeLbl.Position = UDim2.new(0, 0, 0, 4)
+			timeLbl.BackgroundTransparency = 1
+			timeLbl.Font = Enum.Font.Code
+			timeLbl.Text = periodName
+			timeLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
+			timeLbl.TextSize = 10
+			timeLbl.Parent = item
 
-		local icon = Instance.new("ImageLabel")
-		icon.Size = UDim2.new(0, 22, 0, 22)
-		icon.Position = UDim2.new(0.5, -11, 0, 24)
-		icon.BackgroundTransparency = 1
-		icon.Image = getWeatherAsset(codes[i])
-		icon.Parent = item
+			local icon = Instance.new("ImageLabel")
+			icon.Size = UDim2.new(0, 22, 0, 22)
+			icon.Position = UDim2.new(0.5, -11, 0, 24)
+			icon.BackgroundTransparency = 1
+			icon.Image = getWeatherAsset(codes[i])
+			icon.Parent = item
 
-		local popVal = pops[i] or 0
-		local popLbl = Instance.new("TextLabel")
-		popLbl.Size = UDim2.new(1, 0, 0, 14)
-		popLbl.Position = UDim2.new(0, 0, 0, 50)
-		popLbl.BackgroundTransparency = 1
-		popLbl.Font = Enum.Font.Code
-		popLbl.Text = popVal .. "%"
-		popLbl.TextColor3 = Color3.fromRGB(100, 200, 255)
-		popLbl.TextSize = 9
-		popLbl.Parent = item
+			local popVal = pops[i] or 0
+			local popLbl = Instance.new("TextLabel")
+			popLbl.Size = UDim2.new(1, 0, 0, 14)
+			popLbl.Position = UDim2.new(0, 0, 0, 50)
+			popLbl.BackgroundTransparency = 1
+			popLbl.Font = Enum.Font.Code
+			popLbl.Text = popVal .. "%"
+			popLbl.TextColor3 = Color3.fromRGB(100, 200, 255)
+			popLbl.TextSize = 9
+			popLbl.Parent = item
 
-		local tempLbl = Instance.new("TextLabel")
-		tempLbl.Size = UDim2.new(1, 0, 0, 16)
-		tempLbl.Position = UDim2.new(0, 0, 0, 68)
-		tempLbl.BackgroundTransparency = 1
-		tempLbl.Font = Enum.Font.Code
-		tempLbl.Text = math.floor(temps[i] + 0.5) .. "°"
-		tempLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-		tempLbl.TextSize = 11
-		tempLbl.Parent = item
+			local tempLbl = Instance.new("TextLabel")
+			tempLbl.Size = UDim2.new(1, 0, 0, 16)
+			tempLbl.Position = UDim2.new(0, 0, 0, 68)
+			tempLbl.BackgroundTransparency = 1
+			tempLbl.Font = Enum.Font.Code
+			tempLbl.Text = math.floor(temps[i] + 0.5) .. "°"
+			tempLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+			tempLbl.TextSize = 11
+			tempLbl.Parent = item
+		end
 	end
 
 	detailScroll.CanvasSize = UDim2.new(0, count * (itemWidth + 6), 0, 0)
@@ -1487,6 +1574,7 @@ local function updateWeatherDisplay()
 			currentWeatherCode = response.current.weather_code
 			weatherLabel.Text = currentTemp .. "°"
 			weatherIcon.Image = getWeatherAsset(currentWeatherCode)
+			weatherNameLabel.Text = getWeatherName(currentWeatherCode)
 		end
 		if isWeatherOpen then
 			for _, child in ipairs(weatherScroll:GetChildren()) do
@@ -1777,7 +1865,7 @@ local function updateWeatherDisplay()
 				rightIcon.Image = "rbxassetid://93196074526983"
 				rightIcon.Parent = weatherSubTextFrame
 
-				local alertMsg = "Temperature increase in the next 10 Days, Better use sun protection when going out and stay in shadows!"
+				local alertMsg = getDynamicWarning(response)
 				local alertLbl = Instance.new("TextLabel")
 				alertLbl.Size = UDim2.new(1, -56, 1, 0)
 				alertLbl.Position = UDim2.new(0, 28, 0, 0)
