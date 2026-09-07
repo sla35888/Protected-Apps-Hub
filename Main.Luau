@@ -15,7 +15,7 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "OptimizedHubGui"
 screenGui.IgnoreGuiInset = true
 screenGui.ResetOnSpawn = false
-screenGui.DisplayOrder = 9999999999999999999999
+screenGui.DisplayOrder = 99999999999999999999999999
 screenGui.Parent = CoreGui
 
 local mainFrame = Instance.new("Frame")
@@ -247,8 +247,8 @@ searchCorner.Parent = searchBox
 
 local weatherScroll = Instance.new("ScrollingFrame")
 weatherScroll.Name = "WeatherScroll"
-weatherScroll.Size = UDim2.new(1, 0, 1, -38)
-weatherScroll.Position = UDim2.new(0, 0, 0, 36)
+weatherScroll.Size = UDim2.new(1, 0, 1, -34)
+weatherScroll.Position = UDim2.new(0, 0, 0, 34)
 weatherScroll.BackgroundTransparency = 1
 weatherScroll.BorderSizePixel = 0
 weatherScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
@@ -258,8 +258,75 @@ weatherScroll.Parent = weatherMainFrame
 
 local weatherListLayout = Instance.new("UIListLayout")
 weatherListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-weatherListLayout.Padding = UDim.new(0, 6)
+weatherListLayout.Padding = UDim.new(0, 8)
 weatherListLayout.Parent = weatherScroll
+
+local dayDetailFrame = Instance.new("Frame")
+dayDetailFrame.Name = "DayDetailFrame"
+dayDetailFrame.Size = UDim2.new(1, 0, 1, 0)
+dayDetailFrame.Position = UDim2.new(0, 0, 0, 0)
+dayDetailFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+dayDetailFrame.BorderSizePixel = 0
+dayDetailFrame.Visible = false
+dayDetailFrame.ZIndex = 10
+dayDetailFrame.Parent = weatherMainFrame
+
+local detailCorner = Instance.new("UICorner")
+detailCorner.CornerRadius = UDim.new(0, 6)
+detailCorner.Parent = dayDetailFrame
+
+local detailTopBar = Instance.new("Frame")
+detailTopBar.Size = UDim2.new(1, 0, 0, 28)
+detailTopBar.BackgroundTransparency = 1
+detailTopBar.Parent = dayDetailFrame
+
+local detailBackBtn = Instance.new("TextButton")
+detailBackBtn.Size = UDim2.new(0, 50, 0, 24)
+detailBackBtn.Position = UDim2.new(0, 4, 0, 2)
+detailBackBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+detailBackBtn.Font = Enum.Font.Code
+detailBackBtn.Text = "< Back"
+detailBackBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+detailBackBtn.TextSize = 11
+detailBackBtn.AutoButtonColor = true
+local backCorner = Instance.new("UICorner")
+backCorner.CornerRadius = UDim.new(0, 4)
+backCorner.Parent = detailBackBtn
+detailBackBtn.Parent = detailTopBar
+
+local detailTitle = Instance.new("TextLabel")
+detailTitle.Size = UDim2.new(1, -60, 1, 0)
+detailTitle.Position = UDim2.new(0, 60, 0, 0)
+detailTitle.BackgroundTransparency = 1
+detailTitle.Font = Enum.Font.Code
+detailTitle.Text = "Hourly Forecast"
+detailTitle.TextColor3 = Color3.fromRGB(200, 200, 200)
+detailTitle.TextSize = 12
+detailTitle.TextXAlignment = Enum.TextXAlignment.Left
+detailTitle.Parent = detailTopBar
+
+local detailScroll = Instance.new("ScrollingFrame")
+detailScroll.Size = UDim2.new(1, -8, 1, -34)
+detailScroll.Position = UDim2.new(0, 4, 0, 32)
+detailScroll.BackgroundTransparency = 1
+detailScroll.BorderSizePixel = 0
+detailScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+detailScroll.ScrollBarThickness = 2
+detailScroll.ScrollingDirection = Enum.ScrollingDirection.X
+detailScroll.Active = true
+detailScroll.Parent = dayDetailFrame
+
+local detailLayout = Instance.new("UIListLayout")
+detailLayout.FillDirection = Enum.FillDirection.Horizontal
+detailLayout.SortOrder = Enum.SortOrder.LayoutOrder
+detailLayout.Padding = UDim.new(0, 6)
+detailLayout.Parent = detailScroll
+
+detailBackBtn.MouseButton1Click:Connect(function()
+	dayDetailFrame.Visible = false
+	weatherScroll.Visible = true
+	searchBox.Visible = true
+end)
 
 local trendingMainFrame = Instance.new("Frame")
 trendingMainFrame.Name = "TrendingMainFrame"
@@ -1144,6 +1211,87 @@ local function getWeatherAsset(code)
 	end
 end
 
+local function openDayDetail(dayIdx, dateTitle, response)
+	if not (response and response.hourly and response.hourly.time) then return end
+
+	for _, c in ipairs(detailScroll:GetChildren()) do
+		if c:IsA("Frame") then c:Destroy() end
+	end
+
+	detailTitle.Text = "Forecast (" .. dateTitle .. ")"
+
+	local times = response.hourly.time
+	local temps = response.hourly.temperature_2m
+	local codes = response.hourly.weather_code
+	local pops = response.hourly.precipitation_probability or {}
+
+	local startHourIndex = (dayIdx - 1) * 24 + 1
+	local endHourIndex = math.min(dayIdx * 24, #times)
+
+	local itemWidth = 52
+	local count = 0
+
+	for i = startHourIndex, endHourIndex do
+		count = count + 1
+		local tStr = times[i] or ""
+		local hStr = string.match(tStr, "T(%d+:%d+)") or string.format("%02d:00", count - 1)
+
+		local item = Instance.new("Frame")
+		item.Size = UDim2.new(0, itemWidth, 1, -10)
+		item.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+		item.BorderSizePixel = 0
+		item.Parent = detailScroll
+
+		local itCorner = Instance.new("UICorner")
+		itCorner.CornerRadius = UDim.new(0, 4)
+		itCorner.Parent = item
+
+		local timeLbl = Instance.new("TextLabel")
+		timeLbl.Size = UDim2.new(1, 0, 0, 16)
+		timeLbl.Position = UDim2.new(0, 0, 0, 4)
+		timeLbl.BackgroundTransparency = 1
+		timeLbl.Font = Enum.Font.Code
+		timeLbl.Text = hStr
+		timeLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
+		timeLbl.TextSize = 10
+		timeLbl.Parent = item
+
+		local icon = Instance.new("ImageLabel")
+		icon.Size = UDim2.new(0, 22, 0, 22)
+		icon.Position = UDim2.new(0.5, -11, 0, 24)
+		icon.BackgroundTransparency = 1
+		icon.Image = getWeatherAsset(codes[i])
+		icon.Parent = item
+
+		local popVal = pops[i] or 0
+		local popLbl = Instance.new("TextLabel")
+		popLbl.Size = UDim2.new(1, 0, 0, 14)
+		popLbl.Position = UDim2.new(0, 0, 0, 50)
+		popLbl.BackgroundTransparency = 1
+		popLbl.Font = Enum.Font.Code
+		popLbl.Text = popVal .. "%"
+		popLbl.TextColor3 = Color3.fromRGB(100, 200, 255)
+		popLbl.TextSize = 9
+		popLbl.Parent = item
+
+		local tempLbl = Instance.new("TextLabel")
+		tempLbl.Size = UDim2.new(1, 0, 0, 16)
+		tempLbl.Position = UDim2.new(0, 0, 0, 68)
+		tempLbl.BackgroundTransparency = 1
+		tempLbl.Font = Enum.Font.Code
+		tempLbl.Text = math.floor(temps[i] + 0.5) .. "°"
+		tempLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+		tempLbl.TextSize = 11
+		tempLbl.Parent = item
+	end
+
+	detailScroll.CanvasSize = UDim2.new(0, count * (itemWidth + 6), 0, 0)
+
+	weatherScroll.Visible = false
+	searchBox.Visible = false
+	dayDetailFrame.Visible = true
+end
+
 local function updateWeatherDisplay()
 	local success, response = pcall(function()
 		local encoded = HttpService:UrlEncode(currentCity)
@@ -1152,7 +1300,7 @@ local function updateWeatherDisplay()
 		if geoData and geoData.results and #geoData.results > 0 then
 			local lat = geoData.results[1].latitude
 			local lon = geoData.results[1].longitude
-			local weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude=" .. lat .. "&longitude=" .. lon .. "&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code&forecast_days=10"
+			local weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude=" .. lat .. "&longitude=" .. lon .. "&current=temperature_2m,apparent_temperature,weather_code&hourly=temperature_2m,weather_code,precipitation_probability&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=10&timezone=auto"
 			return HttpService:JSONDecode(game:HttpGet(weatherUrl))
 		end
 	end)
@@ -1163,62 +1311,272 @@ local function updateWeatherDisplay()
 			weatherLabel.Text = currentTemp .. "°"
 			weatherIcon.Image = getWeatherAsset(currentWeatherCode)
 		end
-		if isWeatherOpen and response.hourly then
+		if isWeatherOpen then
 			for _, child in ipairs(weatherScroll:GetChildren()) do
 				if child:IsA("Frame") then child:Destroy() end
 			end
-			local times = response.hourly.time
-			local temps = response.hourly.temperature_2m
-			local codes = response.hourly.weather_code
-			local currentTimeStr = os.date("!%Y-%m-%dT%H:00")
-			local startIndex = 1
-			for i, t in ipairs(times) do
-				if t >= currentTimeStr then startIndex = i break end
+
+			local currentTempVal = response.current and math.floor(response.current.temperature_2m + 0.5) or 0
+			local apparentTemp = (response.current and response.current.apparent_temperature) and math.floor(response.current.apparent_temperature + 0.5) or currentTempVal
+			local todayMin = (response.daily and response.daily.temperature_2m_min and response.daily.temperature_2m_min[1]) and math.floor(response.daily.temperature_2m_min[1] + 0.5) or "--"
+			local todayMax = (response.daily and response.daily.temperature_2m_max and response.daily.temperature_2m_max[1]) and math.floor(response.daily.temperature_2m_max[1] + 0.5) or "--"
+
+			local currentFrame = Instance.new("Frame")
+			currentFrame.Name = "CurrentFrame"
+			currentFrame.Size = UDim2.new(1, 0, 0, 60)
+			currentFrame.BackgroundTransparency = 1
+			currentFrame.Parent = weatherScroll
+
+			local bigTemp = Instance.new("TextLabel")
+			bigTemp.Size = UDim2.new(0, 70, 0, 36)
+			bigTemp.Position = UDim2.new(0, 0, 0, 0)
+			bigTemp.BackgroundTransparency = 1
+			bigTemp.Font = Enum.Font.Code
+			bigTemp.Text = currentTempVal .. "°"
+			bigTemp.TextColor3 = Color3.fromRGB(255, 255, 255)
+			bigTemp.TextSize = 28
+			bigTemp.TextXAlignment = Enum.TextXAlignment.Left
+			bigTemp.Parent = currentFrame
+
+			local bigIcon = Instance.new("ImageLabel")
+			bigIcon.Size = UDim2.new(0, 32, 0, 32)
+			bigIcon.Position = UDim2.new(0, 75, 0, 2)
+			bigIcon.BackgroundTransparency = 1
+			bigIcon.Image = getWeatherAsset(response.current and response.current.weather_code or 0)
+			bigIcon.Parent = currentFrame
+
+			local detailsLbl = Instance.new("TextLabel")
+			detailsLbl.Size = UDim2.new(1, 0, 0, 20)
+			detailsLbl.Position = UDim2.new(0, 0, 0, 36)
+			detailsLbl.BackgroundTransparency = 1
+			detailsLbl.Font = Enum.Font.Code
+			detailsLbl.Text = "Feels like " .. apparentTemp .. "° | Min: " .. todayMin .. "° Max: " .. todayMax .. "°"
+			detailsLbl.TextColor3 = Color3.fromRGB(180, 180, 180)
+			detailsLbl.TextSize = 11
+			detailsLbl.TextXAlignment = Enum.TextXAlignment.Left
+			detailsLbl.Parent = currentFrame
+
+			if response.hourly and response.hourly.time then
+				local hourlyCardFrame = Instance.new("Frame")
+				hourlyCardFrame.Name = "HourlyCardFrame"
+				hourlyCardFrame.Size = UDim2.new(1, 0, 0, 95)
+				hourlyCardFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+				hourlyCardFrame.BorderSizePixel = 0
+				hourlyCardFrame.Parent = weatherScroll
+
+				local hCardCorner = Instance.new("UICorner")
+				hCardCorner.CornerRadius = UDim.new(0, 6)
+				hCardCorner.Parent = hourlyCardFrame
+
+				local hTitle = Instance.new("TextLabel")
+				hTitle.Size = UDim2.new(1, -10, 0, 18)
+				hTitle.Position = UDim2.new(0, 8, 0, 4)
+				hTitle.BackgroundTransparency = 1
+				hTitle.Font = Enum.Font.Code
+				hTitle.Text = "HOURLY FORECAST"
+				hTitle.TextColor3 = Color3.fromRGB(150, 150, 150)
+				hTitle.TextSize = 10
+				hTitle.TextXAlignment = Enum.TextXAlignment.Left
+				hTitle.Parent = hourlyCardFrame
+
+				local hScroll = Instance.new("ScrollingFrame")
+				hScroll.Size = UDim2.new(1, -8, 0, 68)
+				hScroll.Position = UDim2.new(0, 4, 0, 22)
+				hScroll.BackgroundTransparency = 1
+				hScroll.BorderSizePixel = 0
+				hScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+				hScroll.ScrollBarThickness = 2
+				hScroll.ScrollingDirection = Enum.ScrollingDirection.X
+				hScroll.Active = true
+				hScroll.Parent = hourlyCardFrame
+
+				local hLayout = Instance.new("UIListLayout")
+				hLayout.FillDirection = Enum.FillDirection.Horizontal
+				hLayout.SortOrder = Enum.SortOrder.LayoutOrder
+				hLayout.Padding = UDim.new(0, 6)
+				hLayout.Parent = hScroll
+
+				local times = response.hourly.time
+				local temps = response.hourly.temperature_2m
+				local codes = response.hourly.weather_code
+				local pops = response.hourly.precipitation_probability or {}
+
+				local currentTimeStr = os.date("!%Y-%m-%dT%H:00")
+				local startIndex = 1
+				for i, t in ipairs(times) do
+					if t >= currentTimeStr then startIndex = i break end
+				end
+
+				local currentLocalTime = os.time()
+				local baseTime = currentLocalTime - (currentLocalTime % 3600)
+				local itemWidth = 52
+				local count = 0
+
+				for i = startIndex, #times do
+					local forecastLocalTime = baseTime + ((i - startIndex) * 3600)
+					local hourStr = os.date("%H:00", forecastLocalTime)
+
+					count = count + 1
+
+					local item = Instance.new("Frame")
+					item.Size = UDim2.new(0, itemWidth, 1, 0)
+					item.BackgroundTransparency = 1
+					item.Parent = hScroll
+
+					local timeLbl = Instance.new("TextLabel")
+					timeLbl.Size = UDim2.new(1, 0, 0, 14)
+					timeLbl.Position = UDim2.new(0, 0, 0, 0)
+					timeLbl.BackgroundTransparency = 1
+					timeLbl.Font = Enum.Font.Code
+					timeLbl.Text = (count == 1) and "Now" or hourStr
+					timeLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
+					timeLbl.TextSize = 10
+					timeLbl.Parent = item
+
+					local icon = Instance.new("ImageLabel")
+					icon.Size = UDim2.new(0, 18, 0, 18)
+					icon.Position = UDim2.new(0.5, -9, 0, 15)
+					icon.BackgroundTransparency = 1
+					icon.Image = getWeatherAsset(codes[i])
+					icon.Parent = item
+
+					local popVal = pops[i] or 0
+					local popLbl = Instance.new("TextLabel")
+					popLbl.Size = UDim2.new(1, 0, 0, 12)
+					popLbl.Position = UDim2.new(0, 0, 0, 34)
+					popLbl.BackgroundTransparency = 1
+					popLbl.Font = Enum.Font.Code
+					popLbl.Text = popVal .. "%"
+					popLbl.TextColor3 = Color3.fromRGB(100, 200, 255)
+					popLbl.TextSize = 9
+					popLbl.Parent = item
+
+					local tempLbl = Instance.new("TextLabel")
+					tempLbl.Size = UDim2.new(1, 0, 0, 14)
+					tempLbl.Position = UDim2.new(0, 0, 0, 48)
+					tempLbl.BackgroundTransparency = 1
+					tempLbl.Font = Enum.Font.Code
+					tempLbl.Text = math.floor(temps[i] + 0.5) .. "°"
+					tempLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+					tempLbl.TextSize = 11
+					tempLbl.Parent = item
+
+					if hourStr == "23:00" then break end
+				end
+				hScroll.CanvasSize = UDim2.new(0, count * (itemWidth + 6), 0, 0)
 			end
-			local currentLocalTime = os.time()
-			local baseTime = currentLocalTime - (currentLocalTime % 3600)
-			local count = 0
-			for i = startIndex, #times do
-				count = count + 1
-				local forecastLocalTime = baseTime + ((i - startIndex) * 3600)
-				local hourStr = os.date("%H", forecastLocalTime)
-				local timeStr = hourStr == "00" and os.date("%d/%m", forecastLocalTime) or hourStr .. ":00"
-				local row = Instance.new("Frame")
-				row.Size = UDim2.new(1, 0, 0, 32)
-				row.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-				row.BorderSizePixel = 0
-				row.Parent = weatherScroll
-				local corner = Instance.new("UICorner")
-				corner.CornerRadius = UDim.new(0, 6)
-				corner.Parent = row
-				local tLabel = Instance.new("TextLabel")
-				tLabel.Size = UDim2.new(0, 80, 1, 0)
-				tLabel.Position = UDim2.new(0, 10, 0, 0)
-				tLabel.BackgroundTransparency = 1
-				tLabel.Font = Enum.Font.Code
-				tLabel.Text = timeStr
-				tLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-				tLabel.TextSize = 12
-				tLabel.TextXAlignment = Enum.TextXAlignment.Left
-				tLabel.Parent = row
-				local rIcon = Instance.new("ImageLabel")
-				rIcon.Size = UDim2.new(0, 20, 0, 20)
-				rIcon.Position = UDim2.new(0.5, -30, 0.5, -10)
-				rIcon.BackgroundTransparency = 1
-				rIcon.Image = getWeatherAsset(codes[i])
-				rIcon.Parent = row
-				local rTemp = Instance.new("TextLabel")
-				rTemp.Size = UDim2.new(0, 60, 1, 0)
-				rTemp.Position = UDim2.new(1, -70, 0, 0)
-				rTemp.BackgroundTransparency = 1
-				rTemp.Font = Enum.Font.Code
-				rTemp.Text = math.floor(temps[i] + 0.5) .. "°C"
-				rTemp.TextColor3 = Color3.fromRGB(255, 255, 255)
-				rTemp.TextSize = 12
-				rTemp.TextXAlignment = Enum.TextXAlignment.Right
-				rTemp.Parent = row
+
+			if response.daily and response.daily.time then
+				local dailyCardFrame = Instance.new("Frame")
+				dailyCardFrame.Name = "DailyCardFrame"
+				dailyCardFrame.Size = UDim2.new(1, 0, 0, 110)
+				dailyCardFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+				dailyCardFrame.BorderSizePixel = 0
+				dailyCardFrame.Parent = weatherScroll
+
+				local dCardCorner = Instance.new("UICorner")
+				dCardCorner.CornerRadius = UDim.new(0, 6)
+				dCardCorner.Parent = dailyCardFrame
+
+				local dTitle = Instance.new("TextLabel")
+				dTitle.Size = UDim2.new(1, -10, 0, 18)
+				dTitle.Position = UDim2.new(0, 8, 0, 4)
+				dTitle.BackgroundTransparency = 1
+				dTitle.Font = Enum.Font.Code
+				dTitle.Text = "10-DAY FORECAST"
+				dTitle.TextColor3 = Color3.fromRGB(150, 150, 150)
+				dTitle.TextSize = 10
+				dTitle.TextXAlignment = Enum.TextXAlignment.Left
+				dTitle.Parent = dailyCardFrame
+
+				local dScroll = Instance.new("ScrollingFrame")
+				dScroll.Size = UDim2.new(1, -8, 0, 82)
+				dScroll.Position = UDim2.new(0, 4, 0, 22)
+				dScroll.BackgroundTransparency = 1
+				dScroll.BorderSizePixel = 0
+				dScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+				dScroll.ScrollBarThickness = 2
+				dScroll.ScrollingDirection = Enum.ScrollingDirection.X
+				dScroll.Active = true
+				dScroll.Parent = dailyCardFrame
+
+				local dLayout = Instance.new("UIListLayout")
+				dLayout.FillDirection = Enum.FillDirection.Horizontal
+				dLayout.SortOrder = Enum.SortOrder.LayoutOrder
+				dLayout.Padding = UDim.new(0, 6)
+				dLayout.Parent = dScroll
+
+				local days = response.daily.time
+				local maxTemps = response.daily.temperature_2m_max
+				local minTemps = response.daily.temperature_2m_min
+				local dCodes = response.daily.weather_code
+				local dPops = response.daily.precipitation_probability_max or {}
+
+				local itemWidth = 65
+				for dayIdx = 1, #days do
+					local dayBtn = Instance.new("TextButton")
+					dayBtn.Size = UDim2.new(0, itemWidth, 1, 0)
+					dayBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+					dayBtn.BorderSizePixel = 0
+					dayBtn.Text = ""
+					dayBtn.AutoButtonColor = true
+					dayBtn.Parent = dScroll
+
+					local btnCorner = Instance.new("UICorner")
+					btnCorner.CornerRadius = UDim.new(0, 4)
+					btnCorner.Parent = dayBtn
+
+					local dateStr = days[dayIdx]
+					local y, m, d = string.match(dateStr, "(%d+)-(%d+)-(%d+)")
+					local formattedDate = (d and m) and (d .. "/" .. m) or dateStr
+
+					local dateLbl = Instance.new("TextLabel")
+					dateLbl.Size = UDim2.new(1, 0, 0, 14)
+					dateLbl.Position = UDim2.new(0, 0, 0, 2)
+					dateLbl.BackgroundTransparency = 1
+					dateLbl.Font = Enum.Font.Code
+					dateLbl.Text = (dayIdx == 1) and "Today" or formattedDate
+					dateLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
+					dateLbl.TextSize = 10
+					dateLbl.Parent = dayBtn
+
+					local icon = Instance.new("ImageLabel")
+					icon.Size = UDim2.new(0, 20, 0, 20)
+					icon.Position = UDim2.new(0.5, -10, 0, 18)
+					icon.BackgroundTransparency = 1
+					icon.Image = getWeatherAsset(dCodes[dayIdx])
+					icon.Parent = dayBtn
+
+					local popVal = dPops[dayIdx] or 0
+					local popLbl = Instance.new("TextLabel")
+					popLbl.Size = UDim2.new(1, 0, 0, 12)
+					popLbl.Position = UDim2.new(0, 0, 0, 40)
+					popLbl.BackgroundTransparency = 1
+					popLbl.Font = Enum.Font.Code
+					popLbl.Text = popVal .. "%"
+					popLbl.TextColor3 = Color3.fromRGB(100, 200, 255)
+					popLbl.TextSize = 9
+					popLbl.Parent = dayBtn
+
+					local rangeLbl = Instance.new("TextLabel")
+					rangeLbl.Size = UDim2.new(1, 0, 0, 24)
+					rangeLbl.Position = UDim2.new(0, 0, 0, 54)
+					rangeLbl.BackgroundTransparency = 1
+					rangeLbl.Font = Enum.Font.Code
+					rangeLbl.Text = math.floor(minTemps[dayIdx] + 0.5) .. "° / " .. math.floor(maxTemps[dayIdx] + 0.5) .. "°"
+					rangeLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+					rangeLbl.TextSize = 10
+					rangeLbl.TextWrapped = true
+					rangeLbl.Parent = dayBtn
+
+					dayBtn.MouseButton1Click:Connect(function()
+						openDayDetail(dayIdx, formattedDate, response)
+					end)
+				end
+				dScroll.CanvasSize = UDim2.new(0, #days * (itemWidth + 6), 0, 0)
 			end
-			weatherScroll.CanvasSize = UDim2.new(0, 0, 0, count * 38)
+
+			weatherScroll.CanvasSize = UDim2.new(0, 0, 0, 285)
 		end
 	end
 end
@@ -1265,6 +1623,9 @@ local function toggleMain(expand, weather)
 		deleteAppMenu.Visible = false
 		trendingMainFrame.Visible = false
 		executeConfirmFrame.Visible = false
+		dayDetailFrame.Visible = false
+		weatherScroll.Visible = true
+		searchBox.Visible = true
 	end
 	
 	if weather then titleLabel.Text = "WEATHER: " .. currentCity end
