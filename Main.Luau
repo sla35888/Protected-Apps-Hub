@@ -4,6 +4,7 @@ local RunService = game:GetService("RunService")
 local Stats = game:GetService("Stats")
 local HttpService = game:GetService("HttpService")
 local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
 
 local collapsedSize = UDim2.new(1, -16, 0, 44)
 local collapsedPosition = UDim2.new(0, 8, 1, -56)
@@ -15,7 +16,7 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "OptimizedHubGui"
 screenGui.IgnoreGuiInset = true
 screenGui.ResetOnSpawn = false
-screenGui.DisplayOrder = 99999999999999999999999999
+screenGui.DisplayOrder = 999999999999999999999999999967
 screenGui.Parent = CoreGui
 
 local mainFrame = Instance.new("Frame")
@@ -82,7 +83,7 @@ buttonImage.Parent = actionButton
 
 local appsScroll = Instance.new("ScrollingFrame")
 appsScroll.Name = "AppsScroll"
-appsScroll.Size = UDim2.new(1, -250, 1, 0)
+appsScroll.Size = UDim2.new(1, -280, 1, 0)
 appsScroll.Position = UDim2.new(0, 46, 0, 0)
 appsScroll.BackgroundTransparency = 1
 appsScroll.BorderSizePixel = 0
@@ -98,6 +99,17 @@ appsListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 appsListLayout.Padding = UDim.new(0, 8)
 appsListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 appsListLayout.Parent = appsScroll
+
+local monButton = Instance.new("TextButton")
+monButton.Name = "MonButton"
+monButton.Size = UDim2.new(0, 32, 0, 32)
+monButton.Position = UDim2.new(1, -276, 0.5, -16)
+monButton.BackgroundTransparency = 1
+monButton.Font = Enum.Font.Code
+monButton.Text = "?"
+monButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+monButton.TextScaled = true
+monButton.Parent = mainFrame
 
 local plusButton = Instance.new("TextButton")
 plusButton.Name = "PlusButton"
@@ -686,6 +698,304 @@ damBtn.TextSize = 12
 damBtn.ZIndex = 201
 damBtn.Parent = deleteAppMenu
 
+local monWindow = Instance.new("Frame")
+monWindow.Name = "MonitoringWindow"
+monWindow.Size = UDim2.new(0, 350, 0, 270)
+monWindow.Position = UDim2.new(0.5, -175, 0.5, -135)
+monWindow.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+monWindow.BorderSizePixel = 0
+monWindow.Visible = false
+monWindow.Active = true
+monWindow.Parent = screenGui
+
+local monCorner = Instance.new("UICorner")
+monCorner.CornerRadius = UDim.new(0, 8)
+monCorner.Parent = monWindow
+
+local monTopBar = Instance.new("Frame")
+monTopBar.Name = "MonTopBar"
+monTopBar.Size = UDim2.new(1, 0, 0, 30)
+monTopBar.BackgroundTransparency = 1
+monTopBar.Parent = monWindow
+
+local monTitle = Instance.new("TextLabel")
+monTitle.Name = "MonTitle"
+monTitle.Size = UDim2.new(1, -40, 1, 0)
+monTitle.Position = UDim2.new(0, 10, 0, 0)
+monTitle.BackgroundTransparency = 1
+monTitle.Font = Enum.Font.Code
+monTitle.Text = "System Performance Monitor"
+monTitle.TextColor3 = Color3.fromRGB(200, 200, 200)
+monTitle.TextSize = 12
+monTitle.TextXAlignment = Enum.TextXAlignment.Left
+monTitle.Parent = monTopBar
+
+local monCloseBtn = Instance.new("TextButton")
+monCloseBtn.Name = "MonCloseButton"
+monCloseBtn.Size = UDim2.new(0, 28, 0, 28)
+monCloseBtn.Position = UDim2.new(1, -30, 0, 2)
+monCloseBtn.BackgroundTransparency = 1
+monCloseBtn.Font = Enum.Font.Code
+monCloseBtn.Text = "X"
+monCloseBtn.TextColor3 = Color3.fromRGB(180, 50, 50)
+monCloseBtn.TextSize = 14
+monCloseBtn.Parent = monTopBar
+
+local monListFrame = Instance.new("Frame")
+monListFrame.Name = "MonListFrame"
+monListFrame.Size = UDim2.new(0, 95, 1, -40)
+monListFrame.Position = UDim2.new(0, 10, 0, 35)
+monListFrame.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
+monListFrame.BorderSizePixel = 0
+monListFrame.Parent = monWindow
+
+local monListCorner = Instance.new("UICorner")
+monListCorner.CornerRadius = UDim.new(0, 6)
+monListCorner.Parent = monListFrame
+
+local monListLayout = Instance.new("UIListLayout")
+monListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+monListLayout.Padding = UDim.new(0, 4)
+monListLayout.Parent = monListFrame
+
+local monRightFrame = Instance.new("Frame")
+monRightFrame.Name = "MonRightFrame"
+monRightFrame.Size = UDim2.new(1, -125, 1, -40)
+monRightFrame.Position = UDim2.new(0, 115, 0, 35)
+monRightFrame.BackgroundTransparency = 1
+monRightFrame.Parent = monWindow
+
+local graphFrame = Instance.new("Frame")
+graphFrame.Name = "GraphFrame"
+graphFrame.Size = UDim2.new(1, 0, 0, 130)
+graphFrame.Position = UDim2.new(0, 0, 0, 0)
+graphFrame.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
+graphFrame.BorderSizePixel = 0
+graphFrame.ClipsDescendants = true
+graphFrame.Parent = monRightFrame
+
+local graphCorner = Instance.new("UICorner")
+graphCorner.CornerRadius = UDim.new(0, 6)
+graphCorner.Parent = graphFrame
+
+local infoPanel = Instance.new("Frame")
+infoPanel.Name = "InfoPanel"
+infoPanel.Size = UDim2.new(1, 0, 1, -138)
+infoPanel.Position = UDim2.new(0, 0, 0, 138)
+infoPanel.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
+infoPanel.BorderSizePixel = 0
+infoPanel.Parent = monRightFrame
+
+local infoCorner = Instance.new("UICorner")
+infoCorner.CornerRadius = UDim.new(0, 6)
+infoCorner.Parent = infoPanel
+
+local infoValueLabel = Instance.new("TextLabel")
+infoValueLabel.Name = "InfoValueLabel"
+infoValueLabel.Size = UDim2.new(1, -12, 0, 22)
+infoValueLabel.Position = UDim2.new(0, 6, 0, 4)
+infoValueLabel.BackgroundTransparency = 1
+infoValueLabel.Font = Enum.Font.Code
+infoValueLabel.Text = "Usage: --"
+infoValueLabel.TextColor3 = Color3.fromRGB(0, 255, 150)
+infoValueLabel.TextSize = 11
+infoValueLabel.TextXAlignment = Enum.TextXAlignment.Left
+infoValueLabel.Parent = infoPanel
+
+local infoSpecsLabel = Instance.new("TextLabel")
+infoSpecsLabel.Name = "InfoSpecsLabel"
+infoSpecsLabel.Size = UDim2.new(1, -12, 1, -30)
+infoSpecsLabel.Position = UDim2.new(0, 6, 0, 26)
+infoSpecsLabel.BackgroundTransparency = 1
+infoSpecsLabel.Font = Enum.Font.Code
+infoSpecsLabel.Text = ""
+infoSpecsLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+infoSpecsLabel.TextSize = 10
+infoSpecsLabel.TextWrapped = true
+infoSpecsLabel.TextXAlignment = Enum.TextXAlignment.Left
+infoSpecsLabel.TextYAlignment = Enum.TextYAlignment.Top
+infoSpecsLabel.Parent = infoPanel
+
+local selectedMetric = "RAM"
+local metricsList = {"CPU", "GPU", "VRAM", "RAM", "FRAMES/S"}
+local metricBtns = {}
+local metricHistory = {
+	["CPU"] = {},
+	["GPU"] = {},
+	["VRAM"] = {},
+	["RAM"] = {},
+	["FRAMES/S"] = {}
+}
+
+local metricDetails = {
+	["CPU"] = {
+		specs = "Central Processing Unit execution latency per frame on the main thread."
+	},
+	["GPU"] = {
+		specs = "Graphics Processing Unit rendering latency per frame."
+	},
+	["VRAM"] = {
+		specs = "Video RAM allocation for geometry, materials, and graphics texture buffers."
+	},
+	["RAM"] = {
+		specs = "Total System Random Access Memory allocated by the Roblox Client process."
+	},
+	["FRAMES/S"] = {
+		specs = "Real-time rendered Frames Per Second rate processed by engine pipeline."
+	}
+}
+
+local function fetchMetricValue(metric)
+	if metric == "RAM" then
+		return math.floor(Stats:GetTotalMemoryUsageMb() or 0)
+	elseif metric == "FRAMES/S" then
+		return math.floor(Workspace:GetRealPhysicsFPS() or 60)
+	elseif metric == "CPU" then
+		local val = Stats.PerformanceStats.CPU:GetValue() or 16
+		return math.floor(val * 10) / 10
+	elseif metric == "GPU" then
+		local val = Stats.PerformanceStats.GPU:GetValue() or 12
+		return math.floor(val * 10) / 10
+	elseif metric == "VRAM" then
+		return math.floor(Stats.PerformanceStats.GFXTextureMemory:GetValue() or 0)
+	end
+	return 0
+end
+
+local function updateAllMetricsData()
+	for _, metric in ipairs(metricsList) do
+		local val = fetchMetricValue(metric)
+		local history = metricHistory[metric]
+		table.insert(history, val)
+		if #history > 20 then
+			table.remove(history, 1)
+		end
+	end
+end
+
+local function redrawGraphAndInfo()
+	for _, child in ipairs(graphFrame:GetChildren()) do
+		if not child:IsA("UICorner") then
+			child:Destroy()
+		end
+	end
+
+	local history = metricHistory[selectedMetric] or {}
+	local currentVal = history[#history] or 0
+	
+	if selectedMetric == "RAM" then
+		infoValueLabel.Text = "Usage: " .. currentVal .. " MB"
+	elseif selectedMetric == "FRAMES/S" then
+		infoValueLabel.Text = "Usage: " .. currentVal .. " FPS"
+	elseif selectedMetric == "CPU" then
+		infoValueLabel.Text = "Usage: " .. currentVal .. " ms"
+	elseif selectedMetric == "GPU" then
+		infoValueLabel.Text = "Usage: " .. currentVal .. " ms"
+	elseif selectedMetric == "VRAM" then
+		infoValueLabel.Text = "Usage: " .. currentVal .. " MB"
+	end
+	
+	infoSpecsLabel.Text = metricDetails[selectedMetric].specs
+
+	if #history < 2 then return end
+
+	local minVal = history[1]
+	local maxVal = history[1]
+	for i = 2, #history do
+		if history[i] < minVal then minVal = history[i] end
+		if history[i] > maxVal then maxVal = history[i] end
+	end
+	if maxVal == minVal then
+		maxVal = minVal + 1
+	end
+
+	local width = graphFrame.AbsoluteSize.X > 0 and graphFrame.AbsoluteSize.X or 225
+	local height = graphFrame.AbsoluteSize.Y > 0 and graphFrame.AbsoluteSize.Y or 130
+	local padX = 10
+	local padY = 12
+	local effWidth = width - (padX * 2)
+	local effHeight = height - (padY * 2)
+
+	local points = {}
+	for i, val in ipairs(history) do
+		local norm = (val - minVal) / (maxVal - minVal)
+		local px = padX + ((i - 1) / (#history - 1)) * effWidth
+		local py = (height - padY) - (norm * effHeight)
+		table.insert(points, Vector2.new(px, py))
+	end
+
+	for i = 1, #points - 1 do
+		local p1 = points[i]
+		local p2 = points[i + 1]
+		local dist = math.sqrt((p2.X - p1.X)^2 + (p2.Y - p1.Y)^2)
+		local angle = math.deg(math.atan2(p2.Y - p1.Y, p2.X - p1.X))
+
+		local line = Instance.new("Frame")
+		line.Size = UDim2.new(0, dist, 0, 2)
+		line.Position = UDim2.new(0, (p1.X + p2.X) / 2, 0, (p1.Y + p2.Y) / 2)
+		line.AnchorPoint = Vector2.new(0.5, 0.5)
+		line.Rotation = angle
+		line.BackgroundColor3 = Color3.fromRGB(0, 255, 150)
+		line.BorderSizePixel = 0
+		line.Parent = graphFrame
+	end
+end
+
+for i, metric in ipairs(metricsList) do
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, 0, 0, 32)
+	btn.BackgroundColor3 = (metric == selectedMetric) and Color3.fromRGB(40, 40, 40) or Color3.fromRGB(25, 25, 25)
+	btn.Font = Enum.Font.Code
+	btn.Text = metric
+	btn.TextColor3 = (metric == selectedMetric) and Color3.fromRGB(0, 255, 150) or Color3.fromRGB(200, 200, 200)
+	btn.TextSize = 11
+	btn.AutoButtonColor = true
+	btn.Parent = monListFrame
+
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 4)
+	corner.Parent = btn
+
+	metricBtns[metric] = btn
+
+	btn.MouseButton1Click:Connect(function()
+		selectedMetric = metric
+		for m, b in pairs(metricBtns) do
+			if m == selectedMetric then
+				b.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+				b.TextColor3 = Color3.fromRGB(0, 255, 150)
+			else
+				b.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+				b.TextColor3 = Color3.fromRGB(200, 200, 200)
+			end
+		end
+		redrawGraphAndInfo()
+	end)
+end
+
+monButton.MouseButton1Click:Connect(function()
+	monWindow.Visible = not monWindow.Visible
+	if monWindow.Visible then
+		redrawGraphAndInfo()
+	end
+end)
+
+monCloseBtn.MouseButton1Click:Connect(function()
+	monWindow.Visible = false
+end)
+
+task.spawn(function()
+	while true do
+		updateAllMetricsData()
+		if monWindow.Visible then
+			redrawGraphAndInfo()
+			task.wait(1.5)
+		else
+			task.wait(4.0)
+		end
+	end
+end)
+
 local HubManager = {}
 local isExpanded = false
 local isWeatherOpen = false
@@ -1212,7 +1522,9 @@ local function getWeatherAsset(code)
 end
 
 local function openDayDetail(dayIdx, dateTitle, response)
-	if not (response and response.hourly and response.hourly.time) then return end
+	weatherScroll.Visible = false
+	searchBox.Visible = false
+	dayDetailFrame.Visible = true
 
 	for _, c in ipairs(detailScroll:GetChildren()) do
 		if c:IsA("Frame") then c:Destroy() end
@@ -1220,10 +1532,10 @@ local function openDayDetail(dayIdx, dateTitle, response)
 
 	detailTitle.Text = "Forecast (" .. dateTitle .. ")"
 
-	local times = response.hourly.time
-	local temps = response.hourly.temperature_2m
-	local codes = response.hourly.weather_code
-	local pops = response.hourly.precipitation_probability or {}
+	local times = (response and response.hourly and response.hourly.time) or {}
+	local temps = (response and response.hourly and response.hourly.temperature_2m) or {}
+	local codes = (response and response.hourly and response.hourly.weather_code) or {}
+	local pops = (response and response.hourly and response.hourly.precipitation_probability) or {}
 
 	local startHourIndex = (dayIdx - 1) * 24 + 1
 	local endHourIndex = math.min(dayIdx * 24, #times)
@@ -1235,6 +1547,9 @@ local function openDayDetail(dayIdx, dateTitle, response)
 		count = count + 1
 		local tStr = times[i] or ""
 		local hStr = string.match(tStr, "T(%d+:%d+)") or string.format("%02d:00", count - 1)
+		local cCode = codes[i] or 0
+		local popVal = pops[i] or 0
+		local rawTemp = temps[i] or 0
 
 		local item = Instance.new("Frame")
 		item.Size = UDim2.new(0, itemWidth, 1, -10)
@@ -1260,10 +1575,9 @@ local function openDayDetail(dayIdx, dateTitle, response)
 		icon.Size = UDim2.new(0, 22, 0, 22)
 		icon.Position = UDim2.new(0.5, -11, 0, 24)
 		icon.BackgroundTransparency = 1
-		icon.Image = getWeatherAsset(codes[i])
+		icon.Image = getWeatherAsset(cCode)
 		icon.Parent = item
 
-		local popVal = pops[i] or 0
 		local popLbl = Instance.new("TextLabel")
 		popLbl.Size = UDim2.new(1, 0, 0, 14)
 		popLbl.Position = UDim2.new(0, 0, 0, 50)
@@ -1279,17 +1593,13 @@ local function openDayDetail(dayIdx, dateTitle, response)
 		tempLbl.Position = UDim2.new(0, 0, 0, 68)
 		tempLbl.BackgroundTransparency = 1
 		tempLbl.Font = Enum.Font.Code
-		tempLbl.Text = math.floor(temps[i] + 0.5) .. "°"
+		tempLbl.Text = math.floor(rawTemp + 0.5) .. "°"
 		tempLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
 		tempLbl.TextSize = 11
 		tempLbl.Parent = item
 	end
 
 	detailScroll.CanvasSize = UDim2.new(0, count * (itemWidth + 6), 0, 0)
-
-	weatherScroll.Visible = false
-	searchBox.Visible = false
-	dayDetailFrame.Visible = true
 end
 
 local function updateWeatherDisplay()
@@ -1606,6 +1916,7 @@ local function toggleMain(expand, weather)
 	pingImage.Visible = not expand
 	weatherContainer.Visible = not expand
 	appsScroll.Visible = not expand
+	monButton.Visible = not expand
 	plusButton.Visible = not expand
 	trendingButton.Visible = not expand
 	
@@ -1779,7 +2090,7 @@ trendingButton.MouseButton1Click:Connect(function()
 					end
 					
 					scriptBtn.MouseButton1Click:Connect(function()
-						local codeToExec = "-- loading code..."
+						local codeToExec = ""
 						pcall(function()
 							local res = game:HttpGet("https://scriptblox.com/api/script/" .. (s.slug or s._id))
 							local dec = HttpService:JSONDecode(res)
@@ -1875,7 +2186,7 @@ plusButton.MouseButton1Click:Connect(function()
 			{
 				type = "Script",
 				name = "ClientScript",
-				source = "-- executes the clientscript or script; Main_App.ClientScript:execute()\n-- finds the clientscript or script; Main_App.ClientScript:find()\n-- reads the code or clientscript or script\nMain_App.ClientScript:read()"
+				source = "Main_App.ClientScript:read()"
 			}
 		}
 	}
