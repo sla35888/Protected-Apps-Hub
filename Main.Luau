@@ -82,7 +82,7 @@ buttonImage.Parent = actionButton
 
 local appsScroll = Instance.new("ScrollingFrame")
 appsScroll.Name = "AppsScroll"
-appsScroll.Size = UDim2.new(1, -210, 1, 0)
+appsScroll.Size = UDim2.new(1, -250, 1, 0)
 appsScroll.Position = UDim2.new(0, 46, 0, 0)
 appsScroll.BackgroundTransparency = 1
 appsScroll.BorderSizePixel = 0
@@ -102,7 +102,7 @@ appsListLayout.Parent = appsScroll
 local plusButton = Instance.new("TextButton")
 plusButton.Name = "PlusButton"
 plusButton.Size = UDim2.new(0, 32, 0, 32)
-plusButton.Position = UDim2.new(1, -134, 0.5, -16)
+plusButton.Position = UDim2.new(1, -240, 0.5, -16)
 plusButton.BackgroundTransparency = 1
 plusButton.Font = Enum.Font.Code
 plusButton.Text = "+"
@@ -110,10 +110,21 @@ plusButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 plusButton.TextScaled = true
 plusButton.Parent = mainFrame
 
+local trendingButton = Instance.new("TextButton")
+trendingButton.Name = "TrendingButton"
+trendingButton.Size = UDim2.new(0, 110, 0, 32)
+trendingButton.Position = UDim2.new(1, -204, 0.5, -16)
+trendingButton.BackgroundTransparency = 1
+trendingButton.Font = Enum.Font.Code
+trendingButton.Text = "Trending scripts"
+trendingButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+trendingButton.TextSize = 12
+trendingButton.Parent = mainFrame
+
 local pingImage = Instance.new("ImageLabel")
 pingImage.Name = "PingImage"
 pingImage.Size = UDim2.new(0, 18, 0, 18)
-pingImage.Position = UDim2.new(1, -94, 0.5, -9)
+pingImage.Position = UDim2.new(1, -85, 0.5, -9)
 pingImage.BackgroundTransparency = 1
 pingImage.Image = "rbxassetid://9512524704"
 pingImage.Parent = mainFrame
@@ -121,7 +132,7 @@ pingImage.Parent = mainFrame
 local weatherContainer = Instance.new("TextButton")
 weatherContainer.Name = "WeatherContainer"
 weatherContainer.Size = UDim2.new(0, 60, 1, 0)
-weatherContainer.Position = UDim2.new(1, -66, 0, 0)
+weatherContainer.Position = UDim2.new(1, -64, 0, 0)
 weatherContainer.BackgroundTransparency = 1
 weatherContainer.Text = ""
 weatherContainer.AutoButtonColor = false
@@ -249,6 +260,86 @@ local weatherListLayout = Instance.new("UIListLayout")
 weatherListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 weatherListLayout.Padding = UDim.new(0, 6)
 weatherListLayout.Parent = weatherScroll
+
+local trendingMainFrame = Instance.new("Frame")
+trendingMainFrame.Name = "TrendingMainFrame"
+trendingMainFrame.Size = UDim2.new(1, -16, 1, -48)
+trendingMainFrame.Position = UDim2.new(0, 8, 0, 40)
+trendingMainFrame.BackgroundTransparency = 1
+trendingMainFrame.Visible = false
+trendingMainFrame.Parent = contentWindow
+
+local trendingScroll = Instance.new("ScrollingFrame")
+trendingScroll.Size = UDim2.new(1, 0, 1, 0)
+trendingScroll.Position = UDim2.new(0, 0, 0, 0)
+trendingScroll.BackgroundTransparency = 1
+trendingScroll.BorderSizePixel = 0
+trendingScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+trendingScroll.ScrollBarThickness = 4
+trendingScroll.Active = true
+trendingScroll.Parent = trendingMainFrame
+
+local trendingListLayout = Instance.new("UIListLayout")
+trendingListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+trendingListLayout.Padding = UDim.new(0, 6)
+trendingListLayout.Parent = trendingScroll
+
+local executeConfirmFrame = Instance.new("Frame")
+executeConfirmFrame.Name = "ExecuteConfirmFrame"
+executeConfirmFrame.Size = UDim2.new(1, -16, 1, -48)
+executeConfirmFrame.Position = UDim2.new(0, 8, 0, 40)
+executeConfirmFrame.BackgroundTransparency = 1
+executeConfirmFrame.Visible = false
+executeConfirmFrame.Parent = contentWindow
+
+local ecTextBox = Instance.new("TextBox")
+ecTextBox.Size = UDim2.new(1, 0, 1, -44)
+ecTextBox.Position = UDim2.new(0, 0, 0, 0)
+ecTextBox.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+ecTextBox.BorderSizePixel = 0
+ecTextBox.Font = Enum.Font.Code
+ecTextBox.Text = ""
+ecTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+ecTextBox.TextSize = 12
+ecTextBox.TextXAlignment = Enum.TextXAlignment.Left
+ecTextBox.TextYAlignment = Enum.TextYAlignment.Top
+ecTextBox.MultiLine = true
+ecTextBox.ClearTextOnFocus = false
+ecTextBox.Parent = executeConfirmFrame
+
+local ecTextCorner = Instance.new("UICorner")
+ecTextCorner.CornerRadius = UDim.new(0, 6)
+ecTextCorner.Parent = ecTextBox
+
+local ecNevermind = Instance.new("TextButton")
+ecNevermind.Name = "EcNevermind"
+ecNevermind.Size = UDim2.new(0.48, 0, 0, 32)
+ecNevermind.Position = UDim2.new(0, 0, 1, -36)
+ecNevermind.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+ecNevermind.Font = Enum.Font.Code
+ecNevermind.Text = "Nevermind"
+ecNevermind.TextColor3 = Color3.fromRGB(255, 255, 255)
+ecNevermind.TextSize = 12
+ecNevermind.AutoButtonColor = true
+local ecNevermindCorner = Instance.new("UICorner")
+ecNevermindCorner.CornerRadius = UDim.new(0, 6)
+ecNevermindCorner.Parent = ecNevermind
+ecNevermind.Parent = executeConfirmFrame
+
+local ecOkay = Instance.new("TextButton")
+ecOkay.Name = "EcOkay"
+ecOkay.Size = UDim2.new(0.48, 0, 0, 32)
+ecOkay.Position = UDim2.new(0.52, 0, 1, -36)
+ecOkay.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+ecOkay.Font = Enum.Font.Code
+ecOkay.Text = "Okay"
+ecOkay.TextColor3 = Color3.fromRGB(255, 255, 255)
+ecOkay.TextSize = 12
+ecOkay.AutoButtonColor = true
+local ecOkayCorner = Instance.new("UICorner")
+ecOkayCorner.CornerRadius = UDim.new(0, 6)
+ecOkayCorner.Parent = ecOkay
+ecOkay.Parent = executeConfirmFrame
 
 local appCreatorMain = Instance.new("Frame")
 appCreatorMain.Name = "AppCreatorMain"
@@ -545,6 +636,7 @@ local contextTarget = nil
 local contextTargetBtn = nil
 local contextType = ""
 local holdRegistry = {}
+local pendingCode = ""
 
 local appTrackers = {}
 
@@ -1157,6 +1249,7 @@ local function toggleMain(expand, weather)
 	weatherContainer.Visible = not expand
 	appsScroll.Visible = not expand
 	plusButton.Visible = not expand
+	trendingButton.Visible = not expand
 	
 	topBar.Visible = expand
 	codeBox.Visible = expand and not weather
@@ -1170,6 +1263,8 @@ local function toggleMain(expand, weather)
 		renameMain.Visible = false
 		contextMenu.Visible = false
 		deleteAppMenu.Visible = false
+		trendingMainFrame.Visible = false
+		executeConfirmFrame.Visible = false
 	end
 	
 	if weather then titleLabel.Text = "WEATHER: " .. currentCity end
@@ -1214,6 +1309,154 @@ end
 actionButton.MouseButton1Click:Connect(function() if not isExpanded then toggleMain(true, false) end end)
 weatherContainer.MouseButton1Click:Connect(function() if not isExpanded then toggleMain(true, true) end end)
 closeButton.MouseButton1Click:Connect(function() if isExpanded then toggleMain(false, false) end end)
+
+trendingButton.MouseButton1Click:Connect(function()
+	if not isExpanded then toggleMain(true, false) end
+	codeBox.Visible = false
+	controlPanel.Visible = false
+	weatherMainFrame.Visible = false
+	appCreatorMain.Visible = false
+	folderMain.Visible = false
+	scriptMain.Visible = false
+	executeConfirmFrame.Visible = false
+	trendingMainFrame.Visible = true
+	titleLabel.Text = "Trending Scripts"
+	
+	task.spawn(function()
+		for _, c in ipairs(trendingScroll:GetChildren()) do
+			if c:IsA("TextButton") then c:Destroy() end
+		end
+		local success, response = pcall(function()
+			return game:HttpGet("https://scriptblox.com/api/script/trending")
+		end)
+		if success and response then
+			local data = HttpService:JSONDecode(response)
+			if data and data.result and data.result.scripts then
+				local scripts = data.result.scripts
+				local filtered = {}
+				for _, s in ipairs(scripts) do
+					local isVer = (s.verified == true or s.verified == 1)
+					local isPat = (s.isPatched == true or s.isPatched == 1)
+					if isVer and not isPat then
+						table.insert(filtered, s)
+					end
+				end
+				table.sort(filtered, function(a, b)
+					return (a.views or 0) > (b.views or 0)
+				end)
+				local count = 0
+				for _, s in ipairs(filtered) do
+					count = count + 1
+					if count > 10 then break end
+					
+					local scriptBtn = Instance.new("TextButton")
+					scriptBtn.Size = UDim2.new(1, 0, 0, 52)
+					scriptBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+					scriptBtn.BorderSizePixel = 0
+					scriptBtn.Text = ""
+					scriptBtn.AutoButtonColor = true
+					scriptBtn.Parent = trendingScroll
+					
+					local sCorner = Instance.new("UICorner")
+					sCorner.CornerRadius = UDim.new(0, 6)
+					sCorner.Parent = scriptBtn
+					
+					local titleLbl = Instance.new("TextLabel")
+					titleLbl.Size = UDim2.new(1, -120, 0, 24)
+					titleLbl.Position = UDim2.new(0, 10, 0, 4)
+					titleLbl.BackgroundTransparency = 1
+					titleLbl.Font = Enum.Font.Code
+					titleLbl.Text = s.title or "Unknown"
+					titleLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+					titleLbl.TextSize = 12
+					titleLbl.TextXAlignment = Enum.TextXAlignment.Left
+					titleLbl.Parent = scriptBtn
+					
+					local gameLbl = Instance.new("TextLabel")
+					gameLbl.Size = UDim2.new(1, -120, 0, 20)
+					gameLbl.Position = UDim2.new(0, 10, 0, 26)
+					gameLbl.BackgroundTransparency = 1
+					gameLbl.Font = Enum.Font.Code
+					gameLbl.Text = (s.game and s.game.name) or "Unknown Game"
+					gameLbl.TextColor3 = Color3.fromRGB(180, 180, 180)
+					gameLbl.TextSize = 11
+					gameLbl.TextXAlignment = Enum.TextXAlignment.Left
+					gameLbl.Parent = scriptBtn
+					
+					local tagX = -10
+					if s.verified == true or s.verified == 1 then
+						local tag = Instance.new("TextLabel")
+						tag.Size = UDim2.new(0, 60, 0, 18)
+						tag.Position = UDim2.new(1, tagX - 60, 0.5, -9)
+						tag.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
+						tag.BackgroundTransparency = 0.8
+						tag.Font = Enum.Font.Code
+						tag.Text = "Verified"
+						tag.TextColor3 = Color3.fromRGB(0, 255, 255)
+						tag.TextSize = 10
+						tag.Parent = scriptBtn
+						local tc = Instance.new("UICorner")
+						tc.CornerRadius = UDim.new(0, 4)
+						tc.Parent = tag
+						tagX = tagX - 65
+					end
+					if s.key == true or s.key == 1 then
+						local tag = Instance.new("TextLabel")
+						tag.Size = UDim2.new(0, 65, 0, 18)
+						tag.Position = UDim2.new(1, tagX - 65, 0.5, -9)
+						tag.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+						tag.BackgroundTransparency = 0.8
+						tag.Font = Enum.Font.Code
+						tag.Text = "With Key"
+						tag.TextColor3 = Color3.fromRGB(255, 255, 0)
+						tag.TextSize = 10
+						tag.Parent = scriptBtn
+						local tc = Instance.new("UICorner")
+						tc.CornerRadius = UDim.new(0, 4)
+						tc.Parent = tag
+						tagX = tagX - 70
+					end
+					
+					scriptBtn.MouseButton1Click:Connect(function()
+						local codeToExec = "-- loading code..."
+						pcall(function()
+							local res = game:HttpGet("https://scriptblox.com/api/script/" .. (s.slug or s._id))
+							local dec = HttpService:JSONDecode(res)
+							if dec and dec.script and dec.script.script then
+								codeToExec = dec.script.script
+							elseif s.script then
+								codeToExec = s.script
+							end
+						end)
+						pendingCode = codeToExec
+						ecTextBox.Text = "The code is \"" .. codeToExec .. "\", are you sure wanna execute this"
+						trendingMainFrame.Visible = false
+						executeConfirmFrame.Visible = true
+						titleLabel.Text = "Confirm Execution"
+					end)
+				end
+				trendingScroll.CanvasSize = UDim2.new(0, 0, 0, count * 58)
+			end
+		end
+	end)
+end)
+
+ecNevermind.MouseButton1Click:Connect(function()
+	executeConfirmFrame.Visible = false
+	trendingMainFrame.Visible = true
+	titleLabel.Text = "Trending Scripts"
+end)
+
+ecOkay.MouseButton1Click:Connect(function()
+	if pendingCode ~= "" then
+		local sf, ff = pcall(loadstring, pendingCode)
+		if sf and type(ff) == "function" then
+			pcall(ff)
+		end
+	end
+	executeConfirmFrame.Visible = false
+	toggleMain(false, false)
+end)
 
 searchBox.FocusLost:Connect(function(ep)
 	if ep and searchBox.Text ~= "" then
