@@ -15,7 +15,7 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "OptimizedHubGui"
 screenGui.IgnoreGuiInset = true
 screenGui.ResetOnSpawn = false
-screenGui.DisplayOrder = 2147483647
+screenGui.DisplayOrder = 9999999999999999999999
 screenGui.Parent = CoreGui
 
 local mainFrame = Instance.new("Frame")
