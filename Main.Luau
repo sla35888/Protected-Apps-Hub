@@ -2292,7 +2292,7 @@ acCreateBtn.MouseButton1Click:Connect(function()
 	if acNameInput.Text ~= "" and #appsData < 10 then
 		local icon = acImageInput.Text
 		if icon == "" then
-			icon = "rbxassetid://1180538928644888"
+			icon = "rbxassetid://79177212497435"
 		elseif not string.match(icon, "rbxassetid://") then
 			icon = "rbxassetid://" .. icon
 		end
