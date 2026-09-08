@@ -91,7 +91,7 @@ buttonImage.Parent = actionButton
 
 local appsScroll = Instance.new("ScrollingFrame")
 appsScroll.Name = "AppsScroll"
-appsScroll.Size = UDim2.new(1, -280, 1, 0)
+appsScroll.Size = UDim2.new(1, -316, 1, 0)
 appsScroll.Position = UDim2.new(0, 46, 0, 0)
 appsScroll.BackgroundTransparency = 1
 appsScroll.BorderSizePixel = 0
@@ -111,7 +111,7 @@ appsListLayout.Parent = appsScroll
 local noteButton = Instance.new("TextButton")
 noteButton.Name = "NoteButton"
 noteButton.Size = UDim2.new(0, 32, 0, 32)
-noteButton.Position = UDim2.new(1, -276, 0.5, -16)
+noteButton.Position = UDim2.new(1, -312, 0.5, -16)
 noteButton.BackgroundTransparency = 1
 noteButton.Font = Enum.Font.Code
 noteButton.Text = "Note"
@@ -122,7 +122,7 @@ noteButton.Parent = mainFrame
 local plusButton = Instance.new("TextButton")
 plusButton.Name = "PlusButton"
 plusButton.Size = UDim2.new(0, 32, 0, 32)
-plusButton.Position = UDim2.new(1, -240, 0.5, -16)
+plusButton.Position = UDim2.new(1, -276, 0.5, -16)
 plusButton.BackgroundTransparency = 1
 plusButton.Font = Enum.Font.Code
 plusButton.Text = "+"
@@ -132,8 +132,8 @@ plusButton.Parent = mainFrame
 
 local trendingButton = Instance.new("TextButton")
 trendingButton.Name = "TrendingButton"
-trendingButton.Size = UDim2.new(0, 110, 0, 32)
-trendingButton.Position = UDim2.new(1, -204, 0.5, -16)
+trendingButton.Size = UDim2.new(0, 105, 0, 32)
+trendingButton.Position = UDim2.new(1, -240, 0.5, -16)
 trendingButton.BackgroundTransparency = 1
 trendingButton.Font = Enum.Font.Code
 trendingButton.Text = "Trending scripts"
@@ -144,15 +144,16 @@ trendingButton.Parent = mainFrame
 local pingImage = Instance.new("ImageLabel")
 pingImage.Name = "PingImage"
 pingImage.Size = UDim2.new(0, 18, 0, 18)
-pingImage.Position = UDim2.new(1, -100, 0.5, -9)
+pingImage.Position = UDim2.new(1, -122, 0.5, -9)
 pingImage.BackgroundTransparency = 1
 pingImage.Image = "rbxassetid://9512524704"
+pingImage.Active = true
 pingImage.Parent = mainFrame
 
 local weatherContainer = Instance.new("TextButton")
 weatherContainer.Name = "WeatherContainer"
-weatherContainer.Size = UDim2.new(0, 85, 1, 0)
-weatherContainer.Position = UDim2.new(1, -88, 0, 0)
+weatherContainer.Size = UDim2.new(0, 95, 1, 0)
+weatherContainer.Position = UDim2.new(1, -98, 0, 0)
 weatherContainer.BackgroundTransparency = 1
 weatherContainer.Text = ""
 weatherContainer.AutoButtonColor = false
@@ -180,7 +181,7 @@ weatherLabel.Parent = weatherContainer
 
 local weatherNameLabel = Instance.new("TextLabel")
 weatherNameLabel.Name = "WeatherNameLabel"
-weatherNameLabel.Size = UDim2.new(0, 35, 0, 18)
+weatherNameLabel.Size = UDim2.new(0, 43, 0, 18)
 weatherNameLabel.Position = UDim2.new(0, 52, 0.5, -9)
 weatherNameLabel.BackgroundTransparency = 1
 weatherNameLabel.Font = Enum.Font.Code
@@ -337,7 +338,8 @@ local noteDetailFrame = Instance.new("Frame")
 noteDetailFrame.Name = "NoteDetailFrame"
 noteDetailFrame.Size = UDim2.new(1, 0, 1, 0)
 noteDetailFrame.Position = UDim2.new(0, 0, 0, 0)
-noteDetailFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+noteDetailFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+noteDetailFrame.BackgroundTransparency = 0.05
 noteDetailFrame.BorderSizePixel = 0
 noteDetailFrame.Visible = false
 noteDetailFrame.ZIndex = 50
@@ -350,9 +352,9 @@ noteDetailTopBar.ZIndex = 51
 noteDetailTopBar.Parent = noteDetailFrame
 
 local noteBackBtn = Instance.new("TextButton")
-noteBackBtn.Size = UDim2.new(0, 50, 0, 28)
+noteBackBtn.Size = UDim2.new(0, 40, 0, 28)
 noteBackBtn.Position = UDim2.new(0, 4, 0, 4)
-noteBackBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+noteBackBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 noteBackBtn.Font = Enum.Font.Code
 noteBackBtn.Text = "<"
 noteBackBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -363,10 +365,24 @@ noteBackCorner.CornerRadius = UDim.new(0, 4)
 noteBackCorner.Parent = noteBackBtn
 noteBackBtn.Parent = noteDetailTopBar
 
+local noteDeleteBtn = Instance.new("TextButton")
+noteDeleteBtn.Size = UDim2.new(0, 56, 0, 28)
+noteDeleteBtn.Position = UDim2.new(1, -182, 0, 4)
+noteDeleteBtn.BackgroundColor3 = Color3.fromRGB(80, 20, 20)
+noteDeleteBtn.Font = Enum.Font.Code
+noteDeleteBtn.Text = "Delete"
+noteDeleteBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+noteDeleteBtn.TextSize = 11
+noteDeleteBtn.ZIndex = 51
+local noteDelCorner = Instance.new("UICorner")
+noteDelCorner.CornerRadius = UDim.new(0, 4)
+noteDelCorner.Parent = noteDeleteBtn
+noteDeleteBtn.Parent = noteDetailTopBar
+
 local noteSaveBtn = Instance.new("TextButton")
-noteSaveBtn.Size = UDim2.new(0, 60, 0, 28)
-noteSaveBtn.Position = UDim2.new(1, -128, 0, 4)
-noteSaveBtn.BackgroundColor3 = Color3.fromRGB(30, 80, 30)
+noteSaveBtn.Size = UDim2.new(0, 56, 0, 28)
+noteSaveBtn.Position = UDim2.new(1, -122, 0, 4)
+noteSaveBtn.BackgroundColor3 = Color3.fromRGB(20, 60, 20)
 noteSaveBtn.Font = Enum.Font.Code
 noteSaveBtn.Text = "Save"
 noteSaveBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -378,11 +394,11 @@ noteSaveCorner.Parent = noteSaveBtn
 noteSaveBtn.Parent = noteDetailTopBar
 
 local noteLeaveBtn = Instance.new("TextButton")
-noteLeaveBtn.Size = UDim2.new(0, 60, 0, 28)
-noteLeaveBtn.Position = UDim2.new(1, -64, 0, 4)
-noteLeaveBtn.BackgroundColor3 = Color3.fromRGB(80, 30, 30)
+noteLeaveBtn.Size = UDim2.new(0, 56, 0, 28)
+noteLeaveBtn.Position = UDim2.new(1, -62, 0, 4)
+noteLeaveBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 noteLeaveBtn.Font = Enum.Font.Code
-noteLeaveBtn.Text = "Leave"
+noteLeaveBtn.Text = "Close"
 noteLeaveBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 noteLeaveBtn.TextSize = 11
 noteLeaveBtn.ZIndex = 51
@@ -394,7 +410,7 @@ noteLeaveBtn.Parent = noteDetailTopBar
 local noteTitleBox = Instance.new("TextBox")
 noteTitleBox.Size = UDim2.new(1, -16, 0, 40)
 noteTitleBox.Position = UDim2.new(0, 8, 0, 44)
-noteTitleBox.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+noteTitleBox.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 noteTitleBox.BorderSizePixel = 0
 noteTitleBox.Font = Enum.Font.Code
 noteTitleBox.Text = ""
@@ -412,7 +428,7 @@ noteTitleCorner.Parent = noteTitleBox
 local noteDescBox = Instance.new("TextBox")
 noteDescBox.Size = UDim2.new(1, -16, 1, -96)
 noteDescBox.Position = UDim2.new(0, 8, 0, 90)
-noteDescBox.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+noteDescBox.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 noteDescBox.BorderSizePixel = 0
 noteDescBox.Font = Enum.Font.Code
 noteDescBox.Text = ""
@@ -854,6 +870,42 @@ damBtn.TextSize = 12
 damBtn.ZIndex = 201
 damBtn.Parent = deleteAppMenu
 
+local pingInfoWindow = Instance.new("Frame")
+pingInfoWindow.Size = UDim2.new(0, 180, 0, 60)
+pingInfoWindow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+pingInfoWindow.BackgroundTransparency = 0.25
+pingInfoWindow.BorderSizePixel = 0
+pingInfoWindow.Visible = false
+pingInfoWindow.ZIndex = 300
+pingInfoWindow.Parent = screenGui
+local piCorner = Instance.new("UICorner")
+piCorner.CornerRadius = UDim.new(0, 6)
+piCorner.Parent = pingInfoWindow
+
+local pingInfoText1 = Instance.new("TextLabel")
+pingInfoText1.Size = UDim2.new(1, -16, 0, 24)
+pingInfoText1.Position = UDim2.new(0, 8, 0, 6)
+pingInfoText1.BackgroundTransparency = 1
+pingInfoText1.Font = Enum.Font.Code
+pingInfoText1.Text = "Ping: -- ms"
+pingInfoText1.TextColor3 = Color3.fromRGB(255, 255, 255)
+pingInfoText1.TextSize = 12
+pingInfoText1.TextXAlignment = Enum.TextXAlignment.Left
+pingInfoText1.ZIndex = 301
+pingInfoText1.Parent = pingInfoWindow
+
+local pingInfoText2 = Instance.new("TextLabel")
+pingInfoText2.Size = UDim2.new(1, -16, 0, 24)
+pingInfoText2.Position = UDim2.new(0, 8, 0, 30)
+pingInfoText2.BackgroundTransparency = 1
+pingInfoText2.Font = Enum.Font.Code
+pingInfoText2.Text = "Server: --"
+pingInfoText2.TextColor3 = Color3.fromRGB(180, 180, 180)
+pingInfoText2.TextSize = 11
+pingInfoText2.TextXAlignment = Enum.TextXAlignment.Left
+pingInfoText2.ZIndex = 301
+pingInfoText2.Parent = pingInfoWindow
+
 local HubManager = {}
 local isExpanded = false
 local isWeatherOpen = false
@@ -864,11 +916,23 @@ local activeTween = nil
 local currentCity = "New York, United States"
 local currentWeatherCode = 0
 local currentTemp = 0
+local currentPingValue = 0
+local serverLocationText = "Unknown, Country"
 
 local appsData = {}
 local notesData = {}
 local currentNoteIndex = nil
-local currentAppStruct = nil
+local currentAppStruct = {
+	name = "Main_App",
+	type = "Folder",
+	children = {
+		{
+			name = "ClientScript",
+			type = "Script",
+			source = "print('Hello from CatsBlock App!')"
+		}
+	}
+}
 local currentEditingNode = nil
 local contextTarget = nil
 local contextTargetBtn = nil
@@ -877,6 +941,15 @@ local holdRegistry = {}
 local pendingCode = ""
 
 local appTrackers = {}
+
+task.spawn(function()
+	local s, res = pcall(function()
+		return HttpService:JSONDecode(game:HttpGet("http://ip-api.com/json/"))
+	end)
+	if s and res and res.regionName and res.country then
+		serverLocationText = res.regionName .. ", " .. res.country
+	end
+end)
 
 local function unproxy(obj)
 	if type(obj) == "userdata" then
@@ -995,52 +1068,6 @@ local function terminateApp(appData)
 	end
 end
 
-local function playExplosionEffect(startPos, iconImage)
-	local fragments = {}
-	for i = 1, 15 do
-		local frag = Instance.new(iconImage and "ImageLabel" or "Frame")
-		frag.Size = UDim2.new(0, 10, 0, 10)
-		frag.Position = UDim2.new(0, startPos.X, 0, startPos.Y)
-		if iconImage then
-			frag.Image = iconImage
-			frag.BackgroundTransparency = 1
-		else
-			frag.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-			local corner = Instance.new("UICorner")
-			corner.CornerRadius = UDim.new(0, 4)
-			corner.Parent = frag
-		end
-		frag.Parent = screenGui
-		local vx = math.random(-15, 15)
-		local vy = math.random(-25, -5)
-		local rot = math.random(-20, 20)
-		table.insert(fragments, {obj = frag, vx = vx, vy = vy, rot = rot})
-	end
-	local conn
-	conn = RunService.RenderStepped:Connect(function()
-		local screenY = screenGui.AbsoluteSize.Y
-		local screenX = screenGui.AbsoluteSize.X
-		local active = false
-		for _, f in ipairs(fragments) do
-			if f.obj.Parent then
-				active = true
-				f.vy = f.vy + 1.2
-				local pos = f.obj.AbsolutePosition
-				local newX = pos.X + f.vx
-				local newY = pos.Y + f.vy
-				f.obj.Position = UDim2.new(0, newX, 0, newY)
-				f.obj.Rotation = f.obj.Rotation + f.rot
-				if newY > screenY + 50 or newX < -50 or newX > screenX + 50 then
-					f.obj:Destroy()
-				end
-			end
-		end
-		if not active then
-			conn:Disconnect()
-		end
-	end)
-end
-
 local function loadSavedLocation()
 	pcall(function()
 		if readfile and isfile and isfile("weather_hub_loc.txt") then
@@ -1153,6 +1180,7 @@ local function executeAppCode(appData)
 	local mainAppTable = {}
 	local clientSrc = nil
 	local function parseNode(node, tbl)
+		if not node.children then return end
 		for _, child in ipairs(node.children) do
 			if child.type == "Script" then
 				if node.name == "Main_App" and child.name == "ClientScript" then
@@ -1189,7 +1217,9 @@ local function executeAppCode(appData)
 			end
 		end
 	end
-	parseNode(appData.structure, mainAppTable)
+	if appData.structure then
+		parseNode(appData.structure, mainAppTable)
+	end
 	env.Main_App = mainAppTable
 	env.main_app = mainAppTable
 	if clientSrc then
@@ -1247,7 +1277,7 @@ local function refreshNotesUI()
 	for i, note in ipairs(notesData) do
 		local noteCard = Instance.new("TextButton")
 		noteCard.Size = UDim2.new(1, 0, 0, 56)
-		noteCard.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+		noteCard.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 		noteCard.BorderSizePixel = 0
 		noteCard.Text = ""
 		noteCard.AutoButtonColor = true
@@ -1288,14 +1318,16 @@ local function refreshNotesUI()
 			currentNoteIndex = i
 			noteTitleBox.Text = note.title or ""
 			noteDescBox.Text = note.description or ""
-			noteDetailFrame.Size = UDim2.new(0, 20, 0, 20)
-			noteDetailFrame.Position = UDim2.new(0.5, -10, 0.5, -10)
+			noteDetailFrame.Size = UDim2.new(0, 10, 0, 10)
+			noteDetailFrame.Position = UDim2.new(0.5, -5, 0.5, -5)
+			noteDetailFrame.BackgroundTransparency = 1
 			noteDetailFrame.Visible = true
 
-			local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+			local tweenInfo = TweenInfo.new(0.25, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
 			TweenService:Create(noteDetailFrame, tweenInfo, {
 				Size = UDim2.new(1, 0, 1, 0),
-				Position = UDim2.new(0, 0, 0, 0)
+				Position = UDim2.new(0, 0, 0, 0),
+				BackgroundTransparency = 0.05
 			}):Play()
 		end)
 	end
@@ -1437,12 +1469,57 @@ task.spawn(function()
 			return dataPing or (Stats.PerformanceStats.Ping:GetValue())
 		end)
 		if success and pingVal then
-			if pingVal < 170 then pingImage.Image = "rbxassetid://9512524704"
-			elseif pingVal >= 170 and pingVal < 300 then pingImage.Image = "rbxassetid://9512524085"
+			currentPingValue = math.floor(pingVal + 0.5)
+			if currentPingValue < 170 then pingImage.Image = "rbxassetid://9512524704"
+			elseif currentPingValue >= 170 and currentPingValue < 300 then pingImage.Image = "rbxassetid://9512524085"
 			else pingImage.Image = "rbxassetid://9512523511"
 			end
 		end
 		task.wait(1)
+	end
+end)
+
+local function openPingWindow(posX, posY)
+	pingInfoText1.Text = "Ping: " .. currentPingValue .. "ms"
+	pingInfoText2.Text = "Server: " .. serverLocationText
+	pingInfoWindow.Position = UDim2.new(0, posX, 0, posY - 70)
+	pingInfoWindow.Visible = true
+end
+
+pingImage.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton2 then
+		openPingWindow(input.Position.X, input.Position.Y)
+	elseif input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		holdRegistry[pingImage] = {start = tick(), pos = input.Position, type = "Ping"}
+	end
+end)
+
+pingImage.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		if holdRegistry[pingImage] then
+			holdRegistry[pingImage] = nil
+		end
+	end
+end)
+
+RunService.Heartbeat:Connect(function()
+	local data = holdRegistry[pingImage]
+	if data and (tick() - data.start >= 1.0) then
+		openPingWindow(data.pos.X, data.pos.Y)
+		holdRegistry[pingImage] = nil
+	end
+end)
+
+UserInputService.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		if pingInfoWindow.Visible then
+			local mousePos = input.Position
+			local absPos = pingInfoWindow.AbsolutePosition
+			local absSize = pingInfoWindow.AbsoluteSize
+			if mousePos.X < absPos.X or mousePos.X > absPos.X + absSize.X or mousePos.Y < absPos.Y or mousePos.Y > absPos.Y + absSize.Y then
+				pingInfoWindow.Visible = false
+			end
+		end
 	end
 end)
 
@@ -1553,47 +1630,41 @@ local function openDayDetail(dayIdx, dateTitle, response)
 	local pops = response.hourly.precipitation_probability or {}
 
 	local dayStart = (dayIdx - 1) * 24
-	local representativeHours = {6, 12, 18, 21}
-	local itemWidth = 65
+	local itemWidth = 52
 	local count = 0
 
-	for _, hOffset in ipairs(representativeHours) do
-		local i = dayStart + hOffset + 1
+	for h = 0, 23 do
+		local i = dayStart + h + 1
 		if i <= #times then
 			count = count + 1
-			local periodName = hOffset == 6 and "Morning" or (hOffset == 12 and "Afternoon" or (hOffset == 18 and "Evening" or "Night"))
+			local hourStr = string.format("%02d:00", h)
 
 			local item = Instance.new("Frame")
-			item.Size = UDim2.new(0, itemWidth, 1, -10)
-			item.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-			item.BorderSizePixel = 0
+			item.Size = UDim2.new(0, itemWidth, 1, 0)
+			item.BackgroundTransparency = 1
 			item.Parent = detailScroll
 
-			local itCorner = Instance.new("UICorner")
-			itCorner.CornerRadius = UDim.new(0, 4)
-			itCorner.Parent = item
-
 			local timeLbl = Instance.new("TextLabel")
-			timeLbl.Size = UDim2.new(1, 0, 0, 16)
-			timeLbl.Position = UDim2.new(0, 0, 0, 4)
+			timeLbl.Size = UDim2.new(1, 0, 0, 14)
+			timeLbl.Position = UDim2.new(0, 0, 0, 0)
 			timeLbl.BackgroundTransparency = 1
 			timeLbl.Font = Enum.Font.Code
-			timeLbl.Text = periodName
+			timeLbl.Text = hourStr
 			timeLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
 			timeLbl.TextSize = 10
 			timeLbl.Parent = item
 
 			local icon = Instance.new("ImageLabel")
-			icon.Size = UDim2.new(0, 22, 0, 22)
-			icon.Position = UDim2.new(0.5, -11, 0, 24)
+			icon.Size = UDim2.new(0, 18, 0, 18)
+			icon.Position = UDim2.new(0.5, -9, 0, 15)
 			icon.BackgroundTransparency = 1
 			icon.Image = getWeatherAsset(codes[i])
 			icon.Parent = item
 
 			local popVal = pops[i] or 0
 			local popLbl = Instance.new("TextLabel")
-			popLbl.Size = UDim2.new(1, 0, 0, 14)
-			popLbl.Position = UDim2.new(0, 0, 0, 50)
+			popLbl.Size = UDim2.new(1, 0, 0, 12)
+			popLbl.Position = UDim2.new(0, 0, 0, 34)
 			popLbl.BackgroundTransparency = 1
 			popLbl.Font = Enum.Font.Code
 			popLbl.Text = popVal .. "%"
@@ -1602,8 +1673,8 @@ local function openDayDetail(dayIdx, dateTitle, response)
 			popLbl.Parent = item
 
 			local tempLbl = Instance.new("TextLabel")
-			tempLbl.Size = UDim2.new(1, 0, 0, 16)
-			tempLbl.Position = UDim2.new(0, 0, 0, 68)
+			tempLbl.Size = UDim2.new(1, 0, 0, 14)
+			tempLbl.Position = UDim2.new(0, 0, 0, 48)
 			tempLbl.BackgroundTransparency = 1
 			tempLbl.Font = Enum.Font.Code
 			tempLbl.Text = math.floor(temps[i] + 0.5) .. "°"
@@ -1742,10 +1813,10 @@ local function updateWeatherDisplay()
 				local count = 0
 
 				for i = startIndex, #times do
-					local forecastLocalTime = baseTime + ((i - startIndex) * 3600)
-					local hourStr = os.date("%H:00", forecastLocalTime)
-
 					count = count + 1
+					if count > 24 then break end
+					local forecastLocalTime = baseTime + ((count - 1) * 3600)
+					local hourStr = os.date("%H:00", forecastLocalTime)
 
 					local item = Instance.new("Frame")
 					item.Size = UDim2.new(0, itemWidth, 1, 0)
@@ -1789,8 +1860,6 @@ local function updateWeatherDisplay()
 					tempLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
 					tempLbl.TextSize = 11
 					tempLbl.Parent = item
-
-					if hourStr == "23:00" then break end
 				end
 				hScroll.CanvasSize = UDim2.new(0, count * (itemWidth + 6), 0, 0)
 			end
@@ -1956,23 +2025,6 @@ end)
 task.spawn(updateWeatherDisplay)
 
 createNoteButton.MouseButton1Click:Connect(function()
-	local btnPos = createNoteButton.AbsolutePosition
-	local winPos = noteMainFrame.AbsolutePosition
-	local relX = btnPos.X - winPos.X
-	local relY = btnPos.Y - winPos.Y
-
-	local animBox = Instance.new("Frame")
-	animBox.Size = UDim2.new(0, 10, 0, 10)
-	animBox.Position = UDim2.new(0, relX + (createNoteButton.AbsoluteSize.X / 2), 0, relY + (createNoteButton.AbsoluteSize.Y / 2))
-	animBox.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-	animBox.BorderSizePixel = 0
-	animBox.ZIndex = 100
-	animBox.Parent = noteMainFrame
-
-	local animCorner = Instance.new("UICorner")
-	animCorner.CornerRadius = UDim.new(0, 6)
-	animCorner.Parent = animBox
-
 	table.insert(notesData, {
 		title = "New Note",
 		description = ""
@@ -1980,20 +2032,21 @@ createNoteButton.MouseButton1Click:Connect(function()
 	saveNotes()
 	refreshNotesUI()
 
-	local targetCard = notesScroll:GetChildren()[#notesData]
-	local targetPosY = 0
-	if targetCard and targetCard:IsA("GuiObject") then
-		targetPosY = targetCard.Position.Y.Offset
-	end
+	currentNoteIndex = #notesData
+	noteTitleBox.Text = notesData[currentNoteIndex].title
+	noteDescBox.Text = notesData[currentNoteIndex].description
 
-	TweenService:Create(animBox, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-		Size = UDim2.new(1, 0, 0, 56),
-		Position = UDim2.new(0, 0, 0, 44 + (#notesData - 1) * 64)
+	noteDetailFrame.Size = UDim2.new(0, 20, 0, 20)
+	noteDetailFrame.Position = UDim2.new(0.5, -10, 0.5, -10)
+	noteDetailFrame.BackgroundTransparency = 1
+	noteDetailFrame.Visible = true
+
+	local tweenInfo = TweenInfo.new(0.25, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
+	TweenService:Create(noteDetailFrame, tweenInfo, {
+		Size = UDim2.new(1, 0, 1, 0),
+		Position = UDim2.new(0, 0, 0, 0),
+		BackgroundTransparency = 0.05
 	}):Play()
-
-	task.delay(0.3, function()
-		animBox:Destroy()
-	end)
 end)
 
 noteBackBtn.MouseButton1Click:Connect(function()
@@ -2003,11 +2056,29 @@ noteBackBtn.MouseButton1Click:Connect(function()
 		saveNotes()
 		refreshNotesUI()
 	end
-	TweenService:Create(noteDetailFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+	TweenService:Create(noteDetailFrame, TweenInfo.new(0.25, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {
 		Size = UDim2.new(0, 20, 0, 20),
-		Position = UDim2.new(0.5, -10, 0.5, -10)
+		Position = UDim2.new(0.5, -10, 0.5, -10),
+		BackgroundTransparency = 1
 	}):Play()
-	task.delay(0.3, function()
+	task.delay(0.25, function()
+		noteDetailFrame.Visible = false
+	end)
+end)
+
+noteDeleteBtn.MouseButton1Click:Connect(function()
+	if currentNoteIndex and notesData[currentNoteIndex] then
+		table.remove(notesData, currentNoteIndex)
+		saveNotes()
+		refreshNotesUI()
+		currentNoteIndex = nil
+	end
+	TweenService:Create(noteDetailFrame, TweenInfo.new(0.25, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {
+		Size = UDim2.new(0, 20, 0, 20),
+		Position = UDim2.new(0.5, -10, 0.5, -10),
+		BackgroundTransparency = 1
+	}):Play()
+	task.delay(0.25, function()
 		noteDetailFrame.Visible = false
 	end)
 end)
@@ -2028,11 +2099,12 @@ noteLeaveBtn.MouseButton1Click:Connect(function()
 		saveNotes()
 		refreshNotesUI()
 	end
-	TweenService:Create(noteDetailFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+	TweenService:Create(noteDetailFrame, TweenInfo.new(0.25, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {
 		Size = UDim2.new(0, 20, 0, 20),
-		Position = UDim2.new(0.5, -10, 0.5, -10)
+		Position = UDim2.new(0.5, -10, 0.5, -10),
+		BackgroundTransparency = 1
 	}):Play()
-	task.delay(0.3, function()
+	task.delay(0.25, function()
 		noteDetailFrame.Visible = false
 	end)
 end)
@@ -2120,6 +2192,64 @@ actionButton.MouseButton1Click:Connect(function() if not isExpanded then toggleM
 weatherContainer.MouseButton1Click:Connect(function() if not isExpanded then toggleMain(true, true, false) end end)
 noteButton.MouseButton1Click:Connect(function() if not isExpanded then toggleMain(true, false, true) end end)
 closeButton.MouseButton1Click:Connect(function() if isExpanded then toggleMain(false, false, false) end end)
+
+plusButton.MouseButton1Click:Connect(function()
+	if not isExpanded then toggleMain(true, false, false) end
+	codeBox.Visible = false
+	controlPanel.Visible = false
+	weatherMainFrame.Visible = false
+	noteMainFrame.Visible = false
+	trendingMainFrame.Visible = false
+	executeConfirmFrame.Visible = false
+	appCreatorMain.Visible = true
+	titleLabel.Text = "App Creator"
+end)
+
+acFolderBtn.MouseButton1Click:Connect(function()
+	appCreatorMain.Visible = false
+	folderMain.Visible = true
+	updateFolderUI()
+	titleLabel.Text = "App Folders"
+end)
+
+fmBack.MouseButton1Click:Connect(function()
+	folderMain.Visible = false
+	appCreatorMain.Visible = true
+	titleLabel.Text = "App Creator"
+end)
+
+smNevermind.MouseButton1Click:Connect(function()
+	scriptMain.Visible = false
+	folderMain.Visible = true
+	titleLabel.Text = "App Folders"
+end)
+
+smSave.MouseButton1Click:Connect(function()
+	if currentEditingNode then
+		currentEditingNode.source = smTextBox.Text
+	end
+	scriptMain.Visible = false
+	folderMain.Visible = true
+	titleLabel.Text = "App Folders"
+end)
+
+acCreateBtn.MouseButton1Click:Connect(function()
+	local appName = acNameInput.Text
+	if appName == "" then appName = "Custom App" end
+	local appIcon = acImageInput.Text
+	
+	local newApp = {
+		appName = appName,
+		appIcon = appIcon,
+		structure = currentAppStruct
+	}
+	table.insert(appsData, newApp)
+	saveApps()
+	refreshAppsUI()
+	toggleMain(false, false, false)
+	acNameInput.Text = ""
+	acImageInput.Text = ""
+end)
 
 trendingButton.MouseButton1Click:Connect(function()
 	if not isExpanded then toggleMain(true, false, false) end
@@ -2287,125 +2417,83 @@ executeButton.MouseButton1Click:Connect(function()
 end)
 
 clearButton.MouseButton1Click:Connect(function() codeBox.Text = "" end)
+
 pasteButton.MouseButton1Click:Connect(function()
 	pcall(function()
-		local c = getclipboard and getclipboard() or (syn and syn.get_clipboard and syn.get_clipboard()) or (Clipboard and Clipboard.get and Clipboard.get()) or ""
-		if c ~= "" then codeBox.Text = tostring(c) end
+		codeBox.Text = getclipboard()
 	end)
 end)
 
-local function closeMenus()
-	if contextMenu.Visible then contextMenu.Visible = false end
-	if deleteAppMenu.Visible then deleteAppMenu.Visible = false end
-end
-
-mainFrame.InputBegan:Connect(function(inp)
-	if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then 
-		resetIdleTimer() 
-		closeMenus()
-	end
-end)
-
-contentWindow.InputBegan:Connect(function(inp)
-	if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then 
-		closeMenus()
-	end
-end)
-
-plusButton.MouseButton1Click:Connect(function()
-	if not isExpanded then toggleMain(true, false, false) end
-	codeBox.Visible = false
-	controlPanel.Visible = false
-	weatherMainFrame.Visible = false
-	noteMainFrame.Visible = false
-	appCreatorMain.Visible = true
-	
-	currentAppStruct = {
-		type = "Folder",
-		name = "Main_App",
-		children = {
-			{
-				type = "Script",
-				name = "ClientScript",
-				source = "-- executes the clientscript or script; Main_App.ClientScript:execute()\n-- finds the clientscript or script; Main_App.ClientScript:find()\n-- reads the code or clientscript or script\nMain_App.ClientScript:read()"
-			}
-		}
-	}
-	acNameInput.Text = ""
-	acImageInput.Text = ""
-end)
-
-acFolderBtn.MouseButton1Click:Connect(function()
-	updateFolderUI()
-	appCreatorMain.Visible = false
-	folderMain.Visible = true
-end)
-
-fmBack.MouseButton1Click:Connect(function()
-	folderMain.Visible = false
-	appCreatorMain.Visible = true
-end)
-
-smNevermind.MouseButton1Click:Connect(function()
-	scriptMain.Visible = false
-	folderMain.Visible = true
-end)
-
-smSave.MouseButton1Click:Connect(function()
-	if currentEditingNode then
-		currentEditingNode.source = smTextBox.Text
-	end
-	scriptMain.Visible = false
-	folderMain.Visible = true
-end)
-
-local function removeNode(node, targetNode)
-	if node.children then
-		for i, child in ipairs(node.children) do
-			if child == targetNode then
-				table.remove(node.children, i)
-				return true
-			else
-				if removeNode(child, targetNode) then return true end
-			end
-		end
-	end
-	return false
-end
-
 cmBtn1.MouseButton1Click:Connect(function()
 	contextMenu.Visible = false
-	renameMain.Visible = true
 	if contextType == "Main" then
-		rmInput.Text = "ClientScript"
-		currentEditingNode = {type = "Script"}
+		if contextTarget and contextTarget.children then
+			table.insert(contextTarget.children, {
+				name = "ClientScript",
+				type = "Script",
+				source = "print('New script')"
+			})
+			updateFolderUI()
+		end
 	else
-		rmInput.Text = contextTarget.name
-		currentEditingNode = "Rename"
+		if contextTarget then
+			renameMain.Visible = true
+			rmInput.Text = contextTarget.name
+		end
 	end
 end)
 
 cmBtn2.MouseButton1Click:Connect(function()
 	contextMenu.Visible = false
 	if contextType == "Main" then
-		renameMain.Visible = true
-		rmInput.Text = "Folder"
-		currentEditingNode = {type = "Folder"}
-	else
-		if contextTarget.name ~= "Main_App" then
-			removeNode(currentAppStruct, contextTarget)
+		if contextTarget and contextTarget.children then
+			table.insert(contextTarget.children, {
+				name = "NewFolder",
+				type = "Folder",
+				children = {}
+			})
 			updateFolderUI()
+		end
+	else
+		local function removeNode(parent, target)
+			if not parent.children then return false end
+			for i, child in ipairs(parent.children) do
+				if child == target then
+					table.remove(parent.children, i)
+					return true
+				else
+					if removeNode(child, target) then return true end
+				end
+			end
+			return false
+		end
+		if contextTarget and currentAppStruct then
+			if contextTarget ~= currentAppStruct then
+				removeNode(currentAppStruct, contextTarget)
+				updateFolderUI()
+			end
 		end
 	end
 end)
 
+rmClose.MouseButton1Click:Connect(function()
+	renameMain.Visible = false
+end)
+
+rmSave.MouseButton1Click:Connect(function()
+	if contextTarget and rmInput.Text ~= "" then
+		contextTarget.name = rmInput.Text
+		updateFolderUI()
+	end
+	renameMain.Visible = false
+end)
+
 damBtn.MouseButton1Click:Connect(function()
 	deleteAppMenu.Visible = false
-	if contextTarget then
-		local appData = appsData[contextTarget]
-		terminateApp(appData)
+	if contextTarget and appsData[contextTarget] then
+		terminateApp(appsData[contextTarget])
 		if contextTargetBtn then
-			playExplosionEffect(contextTargetBtn.AbsolutePosition, appData.appIcon ~= "" and appData.appIcon or nil)
+			playExplosionEffect(contextTargetBtn.AbsolutePosition, contextTargetBtn.Image)
 		end
 		table.remove(appsData, contextTarget)
 		saveApps()
@@ -2413,47 +2501,11 @@ damBtn.MouseButton1Click:Connect(function()
 	end
 end)
 
-rmClose.MouseButton1Click:Connect(function() renameMain.Visible = false end)
-rmSave.MouseButton1Click:Connect(function()
-	if rmInput.Text ~= "" then
-		if currentEditingNode == "Rename" then
-			if contextTarget.name ~= "Main_App" then
-				contextTarget.name = rmInput.Text
-			end
-		else
-			currentEditingNode.name = rmInput.Text
-			if currentEditingNode.type == "Folder" then
-				currentEditingNode.children = {}
-			else
-				currentEditingNode.source = " "
-			end
-			if not contextTarget.children then contextTarget.children = {} end
-			table.insert(contextTarget.children, currentEditingNode)
-		end
-		updateFolderUI()
-	end
-	renameMain.Visible = false
-end)
-
-acCreateBtn.MouseButton1Click:Connect(function()
-	if acNameInput.Text ~= "" and #appsData < 10 then
-		local icon = acImageInput.Text
-		if icon == "" then
-			icon = "rbxassetid://1180538928644888"
-		elseif not string.match(icon, "rbxassetid://") then
-			icon = "rbxassetid://" .. icon
-		end
-		table.insert(appsData, {
-			appName = acNameInput.Text,
-			appIcon = icon,
-			structure = currentAppStruct
-		})
-		saveApps()
-		refreshAppsUI()
-		appCreatorMain.Visible = false
-		toggleMain(false, false, false)
+UserInputService.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		if contextMenu.Visible then contextMenu.Visible = false end
+		if deleteAppMenu.Visible then deleteAppMenu.Visible = false end
 	end
 end)
 
 refreshAppsUI()
-resetIdleTimer()
