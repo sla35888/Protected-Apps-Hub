@@ -2490,14 +2490,14 @@ end)
 
 damBtn.MouseButton1Click:Connect(function()
 	deleteAppMenu.Visible = false
-	if contextTarget and appsData[contextTarget] then
-		terminateApp(appsData[contextTarget])
-		if contextTargetBtn then
-			playExplosionEffect(contextTargetBtn.AbsolutePosition, contextTargetBtn.Image)
+	if contextTarget then
+		local index = type(contextTarget) == "number" and contextTarget or table.find(appsData, contextTarget)
+		if index and appsData[index] then
+			terminateApp(appsData[index])
+			table.remove(appsData, index)
+			saveApps()
+			refreshAppsUI()
 		end
-		table.remove(appsData, contextTarget)
-		saveApps()
-		refreshAppsUI()
 	end
 end)
 
