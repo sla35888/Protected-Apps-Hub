@@ -929,7 +929,7 @@ local currentAppStruct = {
 		{
 			name = "ClientScript",
 			type = "Script",
-			source = "print('Hello World!")"
+			source = 'print('Hello World!")'
 		}
 	}
 }
