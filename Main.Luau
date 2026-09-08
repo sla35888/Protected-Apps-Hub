@@ -18,6 +18,15 @@ screenGui.ResetOnSpawn = false
 screenGui.DisplayOrder = 2147483647
 screenGui.Parent = CoreGui
 
+task.spawn(function()
+	while true do
+		task.wait(1)
+		screenGui.Enabled = false
+		task.wait(0.001)
+		screenGui.Enabled = true
+	end
+end)
+
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
 mainFrame.Size = collapsedSize
@@ -82,7 +91,7 @@ buttonImage.Parent = actionButton
 
 local appsScroll = Instance.new("ScrollingFrame")
 appsScroll.Name = "AppsScroll"
-appsScroll.Size = UDim2.new(1, -250, 1, 0)
+appsScroll.Size = UDim2.new(1, -210, 1, 0)
 appsScroll.Position = UDim2.new(0, 46, 0, 0)
 appsScroll.BackgroundTransparency = 1
 appsScroll.BorderSizePixel = 0
@@ -99,21 +108,10 @@ appsListLayout.Padding = UDim.new(0, 8)
 appsListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 appsListLayout.Parent = appsScroll
 
-local monitorButton = Instance.new("TextButton")
-monitorButton.Name = "MonitorButton"
-monitorButton.Size = UDim2.new(0, 32, 0, 32)
-monitorButton.Position = UDim2.new(1, -276, 0.5, -16)
-monitorButton.BackgroundTransparency = 1
-monitorButton.Font = Enum.Font.Code
-monitorButton.Text = "?"
-monitorButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-monitorButton.TextScaled = true
-monitorButton.Parent = mainFrame
-
 local plusButton = Instance.new("TextButton")
 plusButton.Name = "PlusButton"
 plusButton.Size = UDim2.new(0, 32, 0, 32)
-plusButton.Position = UDim2.new(1, -240, 0.5, -16)
+plusButton.Position = UDim2.new(1, -204, 0.5, -16)
 plusButton.BackgroundTransparency = 1
 plusButton.Font = Enum.Font.Code
 plusButton.Text = "+"
@@ -124,7 +122,7 @@ plusButton.Parent = mainFrame
 local trendingButton = Instance.new("TextButton")
 trendingButton.Name = "TrendingButton"
 trendingButton.Size = UDim2.new(0, 110, 0, 32)
-trendingButton.Position = UDim2.new(1, -204, 0.5, -16)
+trendingButton.Position = UDim2.new(1, -168, 0.5, -16)
 trendingButton.BackgroundTransparency = 1
 trendingButton.Font = Enum.Font.Code
 trendingButton.Text = "Trending scripts"
@@ -142,7 +140,7 @@ pingImage.Parent = mainFrame
 
 local weatherContainer = Instance.new("TextButton")
 weatherContainer.Name = "WeatherContainer"
-weatherContainer.Size = UDim2.new(0, 65, 1, 0)
+weatherContainer.Size = UDim2.new(0, 110, 1, 0)
 weatherContainer.Position = UDim2.new(1, -68, 0, 0)
 weatherContainer.BackgroundTransparency = 1
 weatherContainer.Text = ""
@@ -152,15 +150,15 @@ weatherContainer.Parent = mainFrame
 local weatherIcon = Instance.new("ImageLabel")
 weatherIcon.Name = "WeatherIcon"
 weatherIcon.Size = UDim2.new(0, 18, 0, 18)
-weatherIcon.Position = UDim2.new(0, 0, 0, 4)
+weatherIcon.Position = UDim2.new(0, 0, 0.5, -9)
 weatherIcon.BackgroundTransparency = 1
 weatherIcon.Image = "rbxassetid://82410735894036"
 weatherIcon.Parent = weatherContainer
 
 local weatherLabel = Instance.new("TextLabel")
 weatherLabel.Name = "WeatherLabel"
-weatherLabel.Size = UDim2.new(0, 40, 0, 18)
-weatherLabel.Position = UDim2.new(0, 20, 0, 4)
+weatherLabel.Size = UDim2.new(0, 40, 0, 16)
+weatherLabel.Position = UDim2.new(0, 22, 0, 4)
 weatherLabel.BackgroundTransparency = 1
 weatherLabel.Font = Enum.Font.Code
 weatherLabel.Text = "--°"
@@ -171,8 +169,8 @@ weatherLabel.Parent = weatherContainer
 
 local weatherNameLabel = Instance.new("TextLabel")
 weatherNameLabel.Name = "WeatherNameLabel"
-weatherNameLabel.Size = UDim2.new(1, 0, 0, 16)
-weatherNameLabel.Position = UDim2.new(0, 0, 0, 22)
+weatherNameLabel.Size = UDim2.new(1, -22, 0, 16)
+weatherNameLabel.Position = UDim2.new(0, 22, 0, 20)
 weatherNameLabel.BackgroundTransparency = 1
 weatherNameLabel.Font = Enum.Font.Code
 weatherNameLabel.Text = "Clear"
@@ -283,66 +281,6 @@ local weatherListLayout = Instance.new("UIListLayout")
 weatherListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 weatherListLayout.Padding = UDim.new(0, 8)
 weatherListLayout.Parent = weatherScroll
-
-local monitorMainFrame = Instance.new("Frame")
-monitorMainFrame.Name = "MonitorMainFrame"
-monitorMainFrame.Size = UDim2.new(1, -16, 1, -48)
-monitorMainFrame.Position = UDim2.new(0, 8, 0, 40)
-monitorMainFrame.BackgroundTransparency = 1
-monitorMainFrame.Visible = false
-monitorMainFrame.Parent = contentWindow
-
-local monitorListFrame = Instance.new("ScrollingFrame")
-monitorListFrame.Name = "MonitorListFrame"
-monitorListFrame.Size = UDim2.new(0, 110, 1, 0)
-monitorListFrame.Position = UDim2.new(0, 0, 0, 0)
-monitorListFrame.BackgroundTransparency = 1
-monitorListFrame.BorderSizePixel = 0
-monitorListFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-monitorListFrame.ScrollBarThickness = 2
-monitorListFrame.Parent = monitorMainFrame
-
-local monitorListLayout = Instance.new("UIListLayout")
-monitorListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-monitorListLayout.Padding = UDim.new(0, 4)
-monitorListLayout.Parent = monitorListFrame
-
-local monitorGraphContainer = Instance.new("Frame")
-monitorGraphContainer.Name = "MonitorGraphContainer"
-monitorGraphContainer.Size = UDim2.new(1, -120, 1, -55)
-monitorGraphContainer.Position = UDim2.new(0, 120, 0, 0)
-monitorGraphContainer.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-monitorGraphContainer.BorderSizePixel = 0
-monitorGraphContainer.Parent = monitorMainFrame
-
-local monitorGraphCorner = Instance.new("UICorner")
-monitorGraphCorner.CornerRadius = UDim.new(0, 6)
-monitorGraphCorner.Parent = monitorGraphContainer
-
-local monitorGraphLine = Instance.new("Frame")
-monitorGraphLine.Name = "MonitorGraphLine"
-monitorGraphLine.Size = UDim2.new(1, 0, 1, 0)
-monitorGraphLine.BackgroundTransparency = 1
-monitorGraphLine.Parent = monitorGraphContainer
-
-local monitorInfoBlock = Instance.new("TextLabel")
-monitorInfoBlock.Name = "MonitorInfoBlock"
-monitorInfoBlock.Size = UDim2.new(1, -120, 0, 50)
-monitorInfoBlock.Position = UDim2.new(0, 120, 1, -50)
-monitorInfoBlock.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-monitorInfoBlock.BorderSizePixel = 0
-monitorInfoBlock.Font = Enum.Font.Code
-monitorInfoBlock.Text = "RAM Usage: 0%"
-monitorInfoBlock.TextColor3 = Color3.fromRGB(220, 220, 220)
-monitorInfoBlock.TextSize = 11
-monitorInfoBlock.TextWrapped = true
-monitorInfoBlock.TextXAlignment = Enum.TextXAlignment.Left
-monitorInfoBlock.TextYAlignment = Enum.TextYAlignment.Top
-monitorInfoBlock.Parent = monitorMainFrame
-
-local monitorInfoCorner = Instance.new("UICorner")
-monitorInfoCorner.CornerRadius = UDim.new(0, 6)
-monitorInfoCorner.Parent = monitorInfoBlock
 
 local dayDetailFrame = Instance.new("Frame")
 dayDetailFrame.Name = "DayDetailFrame"
@@ -490,6 +428,278 @@ local ecOkayCorner = Instance.new("UICorner")
 ecOkayCorner.CornerRadius = UDim.new(0, 6)
 ecOkayCorner.Parent = ecOkay
 ecOkay.Parent = executeConfirmFrame
+
+local notesMainFrame = Instance.new("Frame")
+notesMainFrame.Name = "NotesMainFrame"
+notesMainFrame.Size = UDim2.new(1, -16, 1, -48)
+notesMainFrame.Position = UDim2.new(0, 8, 0, 40)
+notesMainFrame.BackgroundTransparency = 1
+notesMainFrame.Visible = false
+notesMainFrame.Parent = contentWindow
+
+local createNoteBtn = Instance.new("TextButton")
+createNoteBtn.Name = "CreateNoteBtn"
+createNoteBtn.Size = UDim2.new(1, 0, 0, 32)
+createNoteBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+createNoteBtn.BorderSizePixel = 0
+createNoteBtn.Font = Enum.Font.Code
+createNoteBtn.Text = "Create a Note"
+createNoteBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+createNoteBtn.TextSize = 12
+createNoteBtn.AutoButtonColor = true
+createNoteBtn.Parent = notesMainFrame
+
+local cnCorner = Instance.new("UICorner")
+cnCorner.CornerRadius = UDim.new(0, 6)
+cnCorner.Parent = createNoteBtn
+
+local notesScroll = Instance.new("ScrollingFrame")
+notesScroll.Name = "NotesScroll"
+notesScroll.Size = UDim2.new(1, 0, 1, -40)
+notesScroll.Position = UDim2.new(0, 0, 0, 40)
+notesScroll.BackgroundTransparency = 1
+notesScroll.BorderSizePixel = 0
+notesScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+notesScroll.ScrollBarThickness = 4
+notesScroll.Active = true
+notesScroll.Parent = notesMainFrame
+
+local notesListLayout = Instance.new("UIListLayout")
+notesListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+notesListLayout.Padding = UDim.new(0, 8)
+notesListLayout.Parent = notesScroll
+
+local noteEditorFrame = Instance.new("Frame")
+noteEditorFrame.Name = "NoteEditorFrame"
+noteEditorFrame.Size = UDim2.new(1, 0, 1, 0)
+noteEditorFrame.Position = UDim2.new(0, 0, 0, 0)
+noteEditorFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+noteEditorFrame.BorderSizePixel = 0
+noteEditorFrame.Visible = false
+noteEditorFrame.ZIndex = 50
+noteEditorFrame.Parent = contentWindow
+
+local neTopBar = Instance.new("Frame")
+neTopBar.Size = UDim2.new(1, 0, 0, 32)
+neTopBar.BackgroundTransparency = 1
+neTopBar.Parent = noteEditorFrame
+
+local neLeftBtn = Instance.new("TextButton")
+neLeftBtn.Size = UDim2.new(0, 40, 0, 28)
+neLeftBtn.Position = UDim2.new(0, 4, 0, 2)
+neLeftBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+neLeftBtn.Font = Enum.Font.Code
+neLeftBtn.Text = "<"
+neLeftBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+neLeftBtn.TextSize = 14
+local nelc = Instance.new("UICorner")
+nelc.CornerRadius = UDim.new(0, 4)
+nelc.Parent = neLeftBtn
+neLeftBtn.Parent = neTopBar
+
+local neSaveBtn = Instance.new("TextButton")
+neSaveBtn.Size = UDim2.new(0, 60, 0, 28)
+neSaveBtn.Position = UDim2.new(0, 50, 0, 2)
+neSaveBtn.BackgroundColor3 = Color3.fromRGB(30, 80, 30)
+neSaveBtn.Font = Enum.Font.Code
+neSaveBtn.Text = "Save"
+neSaveBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+neSaveBtn.TextSize = 12
+local nesd = Instance.new("UICorner")
+nesd.CornerRadius = UDim.new(0, 4)
+nesd.Parent = neSaveBtn
+neSaveBtn.Parent = neTopBar
+
+local neLeaveBtn = Instance.new("TextButton")
+neLeaveBtn.Size = UDim2.new(0, 60, 0, 28)
+neLeaveBtn.Position = UDim2.new(0, 114, 0, 2)
+neLeaveBtn.BackgroundColor3 = Color3.fromRGB(80, 30, 30)
+neLeaveBtn.Font = Enum.Font.Code
+neLeaveBtn.Text = "Leave"
+neLeaveBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+neLeaveBtn.TextSize = 12
+local nelv = Instance.new("UICorner")
+nelv.CornerRadius = UDim.new(0, 4)
+nelv.Parent = neLeaveBtn
+neLeaveBtn.Parent = neTopBar
+
+local neTitleBox = Instance.new("TextBox")
+neTitleBox.Size = UDim2.new(1, -16, 0, 36)
+neTitleBox.Position = UDim2.new(0, 8, 0, 40)
+neTitleBox.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+neTitleBox.BorderSizePixel = 0
+neTitleBox.Font = Enum.Font.Code
+neTitleBox.Text = ""
+neTitleBox.PlaceholderText = "Title..."
+neTitleBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+neTitleBox.TextSize = 18
+neTitleBox.TextXAlignment = Enum.TextXAlignment.Left
+neTitleBox.Parent = noteEditorFrame
+local netc = Instance.new("UICorner")
+netc.CornerRadius = UDim.new(0, 6)
+netc.Parent = neTitleBox
+
+local neDescBox = Instance.new("TextBox")
+neDescBox.Size = UDim2.new(1, -16, 1, -88)
+neDescBox.Position = UDim2.new(0, 8, 0, 82)
+neDescBox.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+neDescBox.BorderSizePixel = 0
+neDescBox.Font = Enum.Font.Code
+neDescBox.Text = ""
+neDescBox.PlaceholderText = "Description..."
+neDescBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+neDescBox.TextSize = 12
+neDescBox.TextXAlignment = Enum.TextXAlignment.Left
+neDescBox.TextYAlignment = Enum.TextYAlignment.Top
+neDescBox.MultiLine = true
+neDescBox.ClearTextOnFocus = false
+neDescBox.Parent = noteEditorFrame
+local nedc = Instance.new("UICorner")
+nedc.CornerRadius = UDim.new(0, 6)
+nedc.Parent = neDescBox
+
+local notesData = {}
+local currentEditingNote = nil
+
+local function saveNotes()
+	pcall(function()
+		if writefile then
+			writefile("optimized_hub_notes.json", HttpService:JSONEncode(notesData))
+		end
+	end)
+end
+
+local function loadNotes()
+	pcall(function()
+		if readfile and isfile and isfile("optimized_hub_notes.json") then
+			local res = readfile("optimized_hub_notes.json")
+			if res and res ~= "" then
+				notesData = HttpService:JSONDecode(res)
+			end
+		end
+	end)
+end
+
+loadNotes()
+
+local function refreshNotesUI()
+	for _, c in ipairs(notesScroll:GetChildren()) do
+		if c:IsA("TextButton") then c:Destroy() end
+	end
+	for i, note in ipairs(notesData) do
+		local btn = Instance.new("TextButton")
+		btn.Size = UDim2.new(1, 0, 0, 50)
+		btn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+		btn.BorderSizePixel = 0
+		btn.Text = ""
+		btn.AutoButtonColor = true
+		btn.Parent = notesScroll
+
+		local bc = Instance.new("UICorner")
+		bc.CornerRadius = UDim.new(0, 6)
+		bc.Parent = btn
+
+		local tLbl = Instance.new("TextLabel")
+		tLbl.Size = UDim2.new(1, -16, 0, 20)
+		tLbl.Position = UDim2.new(0, 8, 0, 4)
+		tLbl.BackgroundTransparency = 1
+		tLbl.Font = Enum.Font.Code
+		tLbl.Text = note.title or "New Note"
+		tLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+		tLbl.TextSize = 14
+		tLbl.TextXAlignment = Enum.TextXAlignment.Left
+		tLbl.Parent = btn
+
+		local descText = note.desc or ""
+		if utf8.len(descText) > 30 then
+			descText = utf8.sub(descText, 1, 30) .. "..."
+		end
+
+		local dLbl = Instance.new("TextLabel")
+		dLbl.Size = UDim2.new(1, -16, 0, 18)
+		dLbl.Position = UDim2.new(0, 8, 0, 26)
+		dLbl.BackgroundTransparency = 1
+		dLbl.Font = Enum.Font.Code
+		dLbl.Text = descText
+		dLbl.TextColor3 = Color3.fromRGB(160, 160, 160)
+		dLbl.TextSize = 11
+		dLbl.TextXAlignment = Enum.TextXAlignment.Left
+		dLbl.Parent = btn
+
+		btn.MouseButton1Click:Connect(function()
+			currentEditingNote = note
+			neTitleBox.Text = note.title or ""
+			neDescBox.Text = note.desc or ""
+			noteEditorFrame.Size = UDim2.new(0, 10, 0, 10)
+			noteEditorFrame.Position = UDim2.new(0.5, -5, 0.5, -5)
+			noteEditorFrame.Visible = true
+			TweenService:Create(noteEditorFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+				Size = UDim2.new(1, 0, 1, 0),
+				Position = UDim2.new(0, 0, 0, 0)
+			}):Play()
+		end)
+	end
+	notesScroll.CanvasSize = UDim2.new(0, 0, 0, #notesData * 58)
+end
+
+createNoteBtn.MouseButton1Click:Connect(function()
+	local newNote = {title = "New Note", desc = ""}
+	table.insert(notesData, 1, newNote)
+	saveNotes()
+	refreshNotesUI()
+
+	local btnPos = createNoteBtn.AbsolutePosition
+	local winPos = notesMainFrame.AbsolutePosition
+	local relX = btnPos.X - winPos.X
+	local relY = btnPos.Y - winPos.Y
+
+	local animBox = Instance.new("Frame")
+	animBox.Size = UDim2.new(0, 10, 0, 10)
+	animBox.Position = UDim2.new(0, relX + 20, 0, relY + 16)
+	animBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	animBox.BorderSizePixel = 0
+	animBox.ZIndex = 100
+	animBox.Parent = notesMainFrame
+
+	local ac = Instance.new("UICorner")
+	ac.CornerRadius = UDim.new(0, 4)
+	ac.Parent = animBox
+
+	local targetY = 40
+	TweenService:Create(animBox, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+		Size = UDim2.new(1, 0, 0, 50),
+		Position = UDim2.new(0, 0, 0, targetY)
+	}):Play()
+
+	task.delay(0.4, function()
+		animBox:Destroy()
+		refreshNotesUI()
+	end)
+end)
+
+local function closeNoteEditor()
+	local tw = TweenService:Create(noteEditorFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+		Size = UDim2.new(0, 10, 0, 10),
+		Position = UDim2.new(0.5, -5, 0.5, -5)
+	})
+	tw:Play()
+	tw.Completed:Connect(function()
+		noteEditorFrame.Visible = false
+	end)
+end
+
+neLeftBtn.MouseButton1Click:Connect(closeNoteEditor)
+neLeaveBtn.MouseButton1Click:Connect(closeNoteEditor)
+
+neSaveBtn.MouseButton1Click:Connect(function()
+	if currentEditingNote then
+		currentEditingNote.title = neTitleBox.Text
+		currentEditingNote.desc = neDescBox.Text
+		saveNotes()
+		refreshNotesUI()
+	end
+	closeNoteEditor()
+end)
 
 local appCreatorMain = Instance.new("Frame")
 appCreatorMain.Name = "AppCreatorMain"
@@ -669,16 +879,24 @@ smSave.Size = UDim2.new(0.48, 0, 0, 32)
 smSave.Position = UDim2.new(0.52, 0, 1, -36)
 smSave.Parent = scriptMain
 
+local noteButton = createButton("NoteButton", "Note", Color3.fromRGB(15, 15, 15))
+noteButton.Size = UDim2.new(0.23, 0, 1, 0)
+noteButton.Position = UDim2.new(0, 0, 0, 0)
+noteButton.Parent = controlPanel
+
 local executeButton = createButton("ExecuteButton", "Execute", Color3.fromRGB(15, 15, 15))
-executeButton.Position = UDim2.new(0, 0, 0, 0)
+executeButton.Size = UDim2.new(0.23, 0, 1, 0)
+executeButton.Position = UDim2.new(0.24, 0, 0, 0)
 executeButton.Parent = controlPanel
 
 local clearButton = createButton("ClearButton", "Clear", Color3.fromRGB(15, 15, 15))
-clearButton.Position = UDim2.new(0.34, 0, 0, 0)
+clearButton.Size = UDim2.new(0.23, 0, 1, 0)
+clearButton.Position = UDim2.new(0.48, 0, 0, 0)
 clearButton.Parent = controlPanel
 
 local pasteButton = createButton("PasteButton", "Paste", Color3.fromRGB(15, 15, 15))
-pasteButton.Position = UDim2.new(0.68, 0, 0, 0)
+pasteButton.Size = UDim2.new(0.23, 0, 1, 0)
+pasteButton.Position = UDim2.new(0.72, 0, 0, 0)
 pasteButton.Parent = controlPanel
 
 local renameMain = Instance.new("Frame")
@@ -772,7 +990,7 @@ damBtn.Parent = deleteAppMenu
 local HubManager = {}
 local isExpanded = false
 local isWeatherOpen = false
-local isMonitorOpen = false
+local isNotesOpen = false
 local isIdle = false
 local idleTween = nil
 local activeTween = nil
@@ -790,11 +1008,6 @@ local holdRegistry = {}
 local pendingCode = ""
 
 local appTrackers = {}
-local selectedMetric = "RAM"
-local monitorHistory = {CPU = {}, GPU = {}, VRAM = {}, RAM = {}, ["FRAMES/S"] = {}}
-for _, m in ipairs({"CPU", "GPU", "VRAM", "RAM", "FRAMES/S"}) do
-	for i = 1, 30 do table.insert(monitorHistory[m], 0) end
-end
 
 local function unproxy(obj)
 	if type(obj) == "userdata" then
@@ -995,6 +1208,7 @@ end
 
 loadSavedLocation()
 loadApps()
+refreshNotesUI()
 
 local function executeAppCode(appData)
 	if not appTrackers[appData] then appTrackers[appData] = {} end
@@ -1281,106 +1495,6 @@ task.spawn(function()
 		task.wait(1)
 	end
 end)
-
-local function updateMonitorGraph()
-	for _, c in ipairs(monitorGraphLine:GetChildren()) do
-		c:Destroy()
-	end
-	local history = monitorHistory[selectedMetric]
-	local maxPts = #history
-	if maxPts < 2 then return end
-	local width = monitorGraphLine.AbsoluteSize.X
-	local height = monitorGraphLine.AbsoluteSize.Y
-	if width <= 0 or height <= 0 then return end
-
-	for i = 1, maxPts - 1 do
-		local v1 = history[i]
-		local v2 = history[i+1]
-		local x1 = (i - 1) / (maxPts - 1) * width
-		local x2 = i / (maxPts - 1) * width
-		local y1 = height - (v1 / 100 * height)
-		local y2 = height - (v2 / 100 * height)
-
-		local line = Instance.new("Frame")
-		line.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
-		line.BorderSizePixel = 0
-		local dist = math.sqrt((x2 - x1)^2 + (y2 - y1)^2)
-		line.Size = UDim2.new(0, dist, 0, 2)
-		line.Position = UDim2.new(0, x1, 0, y1)
-		line.Rotation = math.deg(math.atan2(y2 - y1, x2 - x1))
-		line.AnchorPoint = Vector2.new(0, 0.5)
-		line.Parent = monitorGraphLine
-	end
-end
-
-local function updateMonitorData()
-	local ramVal = math.clamp(math.floor(math.noise(tick() * 0.5) * 25 + 50), 10, 95)
-	local cpuVal = math.clamp(math.floor(math.noise(tick() * 0.7 + 10) * 30 + 45), 5, 98)
-	local gpuVal = math.clamp(math.floor(math.noise(tick() * 0.6 + 20) * 35 + 55), 10, 99)
-	local vramVal = math.clamp(math.floor(math.noise(tick() * 0.4 + 30) * 20 + 40), 10, 90)
-	local fpsVal = math.clamp(math.floor(60 + math.noise(tick()) * 15), 15, 120)
-
-	monitorHistory["RAM"][#monitorHistory["RAM"] + 1] = ramVal
-	table.remove(monitorHistory["RAM"], 1)
-	monitorHistory["CPU"][#monitorHistory["CPU"] + 1] = cpuVal
-	table.remove(monitorHistory["CPU"], 1)
-	monitorHistory["GPU"][#monitorHistory["GPU"] + 1] = gpuVal
-	table.remove(monitorHistory["GPU"], 1)
-	monitorHistory["VRAM"][#monitorHistory["VRAM"] + 1] = vramVal
-	table.remove(monitorHistory["VRAM"], 1)
-	monitorHistory["FRAMES/S"][#monitorHistory["FRAMES/S"] + 1] = math.floor(fpsVal / 120 * 100)
-	table.remove(monitorHistory["FRAMES/S"], 1)
-
-	if isMonitorOpen then
-		updateMonitorGraph()
-		local currentVal = selectedMetric == "FRAMES/S" and fpsVal .. " FPS" or (monitorHistory[selectedMetric][#monitorHistory[selectedMetric]] .. "%")
-		local specs = {
-			RAM = "RAM: System Random Access Memory allocation. Dedicated to active runtime variables and instances.",
-			CPU = "CPU: Central Processing Unit core load. Handles core game logic, physics calculations, and scripts.",
-			GPU = "GPU: Graphics Processing Unit rendering pipeline. Handles meshes, textures, shaders, and lighting.",
-			VRAM = "VRAM: Video RAM usage. Stores active textures, graphic buffers, and frame buffers.",
-			["FRAMES/S"] = "FRAMES/S: Screen refresh rate performance. Measures rendered frames per second."
-		}
-		monitorInfoBlock.Text = selectedMetric .. " Usage: " .. currentVal .. "\n" .. (specs[selectedMetric] or "")
-	end
-end
-
-task.spawn(function()
-	while true do
-		local rate = isMonitorOpen and 1.5 or 4.0
-		pcall(updateMonitorData)
-		task.wait(rate)
-	end
-end)
-
-local function initMonitorList()
-	for _, c in ipairs(monitorListFrame:GetChildren()) do
-		if c:IsA("TextButton") then c:Destroy() end
-	end
-	local metrics = {"RAM", "CPU", "GPU", "VRAM", "FRAMES/S"}
-	for _, m in ipairs(metrics) do
-		local btn = Instance.new("TextButton")
-		btn.Size = UDim2.new(1, 0, 0, 28)
-		btn.BackgroundColor3 = (m == selectedMetric) and Color3.fromRGB(35, 35, 35) or Color3.fromRGB(20, 20, 20)
-		btn.BorderSizePixel = 0
-		btn.Font = Enum.Font.Code
-		btn.Text = m
-		btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-		btn.TextSize = 11
-		btn.AutoButtonColor = true
-		local corner = Instance.new("UICorner")
-		corner.CornerRadius = UDim.new(0, 4)
-		corner.Parent = btn
-		btn.Parent = monitorListFrame
-
-		btn.MouseButton1Click:Connect(function()
-			selectedMetric = m
-			initMonitorList()
-			updateMonitorData()
-		end)
-	end
-	monitorListFrame.CanvasSize = UDim2.new(0, 0, 0, #metrics * 32)
-end
 
 local function getWeatherAsset(code)
 	if code == 0 then return "rbxassetid://82410735894036"
@@ -1891,10 +2005,10 @@ task.spawn(function()
 end)
 task.spawn(updateWeatherDisplay)
 
-local function toggleMain(expand, weather, monitor)
+local function toggleMain(expand, weather, notes)
 	isExpanded = expand
 	isWeatherOpen = weather
-	isMonitorOpen = monitor
+	isNotesOpen = notes
 	isIdle = false
 	if idleTween then idleTween:Cancel() end
 	if activeTween then activeTween:Cancel() end
@@ -1904,14 +2018,13 @@ local function toggleMain(expand, weather, monitor)
 	weatherContainer.Visible = not expand
 	appsScroll.Visible = not expand
 	plusButton.Visible = not expand
-	monitorButton.Visible = not expand
 	trendingButton.Visible = not expand
 	
 	topBar.Visible = expand
-	codeBox.Visible = expand and not weather and not monitor
-	controlPanel.Visible = expand and not weather and not monitor
+	codeBox.Visible = expand and not weather and not notes
+	controlPanel.Visible = expand and not weather and not notes
 	weatherMainFrame.Visible = expand and weather
-	monitorMainFrame.Visible = expand and monitor
+	notesMainFrame.Visible = expand and notes
 	
 	if not expand then
 		appCreatorMain.Visible = false
@@ -1923,13 +2036,14 @@ local function toggleMain(expand, weather, monitor)
 		trendingMainFrame.Visible = false
 		executeConfirmFrame.Visible = false
 		dayDetailFrame.Visible = false
-		monitorMainFrame.Visible = false
+		notesMainFrame.Visible = false
+		noteEditorFrame.Visible = false
 		weatherScroll.Visible = true
 		searchBox.Visible = true
 	end
 	
 	if weather then titleLabel.Text = "WEATHER: " .. currentCity
-	elseif monitor then titleLabel.Text = "HARDWARE MONITOR" end
+	elseif notes then titleLabel.Text = "NOTES" end
 	
 	local tInfo = TweenInfo.new(0.4, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
 	
@@ -1959,7 +2073,7 @@ local function toggleMain(expand, weather, monitor)
 	contentTween:Play()
 	
 	if expand and weather then task.spawn(updateWeatherDisplay)
-	elseif expand and monitor then initMonitorList() updateMonitorData() end
+	elseif expand and notes then refreshNotesUI() end
 	if not expand then
 		contentTween.Completed:Connect(function()
 			if not isExpanded then contentWindow.Visible = false end
@@ -1971,7 +2085,7 @@ end
 
 actionButton.MouseButton1Click:Connect(function() if not isExpanded then toggleMain(true, false, false) end end)
 weatherContainer.MouseButton1Click:Connect(function() if not isExpanded then toggleMain(true, true, false) end end)
-monitorButton.MouseButton1Click:Connect(function() if not isExpanded then toggleMain(true, false, true) end end)
+noteButton.MouseButton1Click:Connect(function() if not isExpanded then toggleMain(true, false, true) end end)
 closeButton.MouseButton1Click:Connect(function() if isExpanded then toggleMain(false, false, false) end end)
 
 trendingButton.MouseButton1Click:Connect(function()
@@ -1979,7 +2093,7 @@ trendingButton.MouseButton1Click:Connect(function()
 	codeBox.Visible = false
 	controlPanel.Visible = false
 	weatherMainFrame.Visible = false
-	monitorMainFrame.Visible = false
+	notesMainFrame.Visible = false
 	appCreatorMain.Visible = false
 	folderMain.Visible = false
 	scriptMain.Visible = false
@@ -2170,7 +2284,7 @@ plusButton.MouseButton1Click:Connect(function()
 	codeBox.Visible = false
 	controlPanel.Visible = false
 	weatherMainFrame.Visible = false
-	monitorMainFrame.Visible = false
+	notesMainFrame.Visible = false
 	appCreatorMain.Visible = true
 	
 	currentAppStruct = {
@@ -2292,7 +2406,7 @@ acCreateBtn.MouseButton1Click:Connect(function()
 	if acNameInput.Text ~= "" and #appsData < 10 then
 		local icon = acImageInput.Text
 		if icon == "" then
-			icon = "rbxassetid://79177212497435"
+			icon = "rbxassetid://1180538928644888"
 		elseif not string.match(icon, "rbxassetid://") then
 			icon = "rbxassetid://" .. icon
 		end
