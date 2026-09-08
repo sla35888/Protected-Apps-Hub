@@ -929,7 +929,7 @@ local currentAppStruct = {
 		{
 			name = "ClientScript",
 			type = "Script",
-			source = 'print('Hello World!")'
+			source = 'print("Hello World!")'
 		}
 	}
 }
@@ -1684,7 +1684,7 @@ local function openDayDetail(dayIdx, dateTitle, response)
 		end
 	end
 
-	detailScroll.CanvasSize = UDim2.new(0, count * (itemWidth + 6), 0, 0)
+	detailScroll.CanvasSize = UDim2.new(0, count * (itemWidth + 6), 1, 0)
 
 	weatherScroll.Visible = false
 	searchBox.Visible = false
@@ -2328,53 +2328,22 @@ trendingButton.MouseButton1Click:Connect(function()
 					local tagX = -10
 					if s.verified == true or s.verified == 1 then
 						local tag = Instance.new("TextLabel")
-						tag.Size = UDim2.new(0, 60, 0, 18)
-						tag.Position = UDim2.new(1, tagX - 60, 0.5, -9)
-						tag.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
-						tag.BackgroundTransparency = 0.8
+						tag.Size = UDim2.new(0, 50, 0, 18)
+						tag.Position = UDim2.new(1, tagX, 0.5, -9)
+						tag.BackgroundTransparency = 1
 						tag.Font = Enum.Font.Code
 						tag.Text = "Verified"
-						tag.TextColor3 = Color3.fromRGB(0, 255, 255)
+						tag.TextColor3 = Color3.fromRGB(100, 255, 100)
 						tag.TextSize = 10
 						tag.Parent = scriptBtn
-						local tc = Instance.new("UICorner")
-						tc.CornerRadius = UDim.new(0, 4)
-						tc.Parent = tag
-						tagX = tagX - 65
+						tagX = tagX - 55
 					end
-					if s.key == true or s.key == 1 then
-						local tag = Instance.new("TextLabel")
-						tag.Size = UDim2.new(0, 65, 0, 18)
-						tag.Position = UDim2.new(1, tagX - 65, 0.5, -9)
-						tag.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
-						tag.BackgroundTransparency = 0.8
-						tag.Font = Enum.Font.Code
-						tag.Text = "With Key"
-						tag.TextColor3 = Color3.fromRGB(255, 255, 0)
-						tag.TextSize = 10
-						tag.Parent = scriptBtn
-						local tc = Instance.new("UICorner")
-						tc.CornerRadius = UDim.new(0, 4)
-						tc.Parent = tag
-						tagX = tagX - 70
-					end
-					
+
 					scriptBtn.MouseButton1Click:Connect(function()
-						local codeToExec = "-- loading code..."
-						pcall(function()
-							local res = game:HttpGet("https://scriptblox.com/api/script/" .. (s.slug or s._id))
-							local dec = HttpService:JSONDecode(res)
-							if dec and dec.script and dec.script.script then
-								codeToExec = dec.script.script
-							elseif s.script then
-								codeToExec = s.script
-							end
-						end)
-						pendingCode = codeToExec
-						ecTextBox.Text = "The code is \"" .. codeToExec .. "\", are you sure wanna execute this"
+						ecTextBox.Text = s.script or ""
 						trendingMainFrame.Visible = false
 						executeConfirmFrame.Visible = true
-						titleLabel.Text = "Confirm Execution"
+						titleLabel.Text = s.title or "Execute Script"
 					end)
 				end
 				trendingScroll.CanvasSize = UDim2.new(0, 0, 0, count * 58)
@@ -2390,124 +2359,11 @@ ecNevermind.MouseButton1Click:Connect(function()
 end)
 
 ecOkay.MouseButton1Click:Connect(function()
-	if pendingCode ~= "" then
-		local sf, ff = pcall(loadstring, pendingCode)
-		if sf and type(ff) == "function" then
-			pcall(ff)
-		end
-	end
+	local s = ecTextBox.Text
 	executeConfirmFrame.Visible = false
 	toggleMain(false, false, false)
-end)
-
-searchBox.FocusLost:Connect(function(ep)
-	if ep and searchBox.Text ~= "" then
-		currentCity = searchBox.Text
-		saveCurrentLocation(currentCity)
-		titleLabel.Text = "WEATHER: " .. currentCity
-		task.spawn(updateWeatherDisplay)
+	local f, err = loadstring(s)
+	if f then
+		pcall(f)
 	end
 end)
-
-executeButton.MouseButton1Click:Connect(function()
-	if codeBox.Text ~= "" then
-		local s, f = pcall(loadstring, codeBox.Text)
-		if s and type(f) == "function" then pcall(f) end
-	end
-end)
-
-clearButton.MouseButton1Click:Connect(function() codeBox.Text = "" end)
-
-pasteButton.MouseButton1Click:Connect(function()
-	pcall(function()
-		codeBox.Text = getclipboard()
-	end)
-end)
-
-cmBtn1.MouseButton1Click:Connect(function()
-	contextMenu.Visible = false
-	if contextType == "Main" then
-		if contextTarget and contextTarget.children then
-			table.insert(contextTarget.children, {
-				name = "ClientScript",
-				type = "Script",
-				source = "print('New script')"
-			})
-			updateFolderUI()
-		end
-	else
-		if contextTarget then
-			renameMain.Visible = true
-			rmInput.Text = contextTarget.name
-		end
-	end
-end)
-
-cmBtn2.MouseButton1Click:Connect(function()
-	contextMenu.Visible = false
-	if contextType == "Main" then
-		if contextTarget and contextTarget.children then
-			table.insert(contextTarget.children, {
-				name = "NewFolder",
-				type = "Folder",
-				children = {}
-			})
-			updateFolderUI()
-		end
-	else
-		local function removeNode(parent, target)
-			if not parent.children then return false end
-			for i, child in ipairs(parent.children) do
-				if child == target then
-					table.remove(parent.children, i)
-					return true
-				else
-					if removeNode(child, target) then return true end
-				end
-			end
-			return false
-		end
-		if contextTarget and currentAppStruct then
-			if contextTarget ~= currentAppStruct then
-				removeNode(currentAppStruct, contextTarget)
-				updateFolderUI()
-			end
-		end
-	end
-end)
-
-rmClose.MouseButton1Click:Connect(function()
-	renameMain.Visible = false
-end)
-
-rmSave.MouseButton1Click:Connect(function()
-	if contextTarget and rmInput.Text ~= "" then
-		contextTarget.name = rmInput.Text
-		updateFolderUI()
-	end
-	renameMain.Visible = false
-end)
-
-damBtn.MouseButton1Click:Connect(function()
-	deleteAppMenu.Visible = false
-	if contextTarget then
-		local index = type(contextTarget) == "number" and contextTarget or table.find(appsData, contextTarget)
-		if index and appsData[index] then
-			terminateApp(appsData[index])
-			table.remove(appsData, index)
-			saveApps()
-			refreshAppsUI()
-		end
-	end
-end)
-
-UserInputService.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		if contextMenu.Visible then contextMenu.Visible = false end
-		if deleteAppMenu.Visible then deleteAppMenu.Visible = false end
-	end
-end)
-
-refreshAppsUI()
-
-
