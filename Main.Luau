@@ -913,7 +913,7 @@ local isNoteOpen = false
 local isIdle = false
 local idleTween = nil
 local activeTween = nil
-local currentCity = "New York, United States"
+local currentCity = "Yakutsk, Sakha Republic"
 local currentWeatherCode = 0
 local currentTemp = 0
 local currentPingValue = 0
@@ -929,7 +929,7 @@ local currentAppStruct = {
 		{
 			name = "ClientScript",
 			type = "Script",
-			source = "print('Hello from CatsBlock App!')"
+			source = "print('Hello World!")"
 		}
 	}
 }
