@@ -2509,3 +2509,5 @@ UserInputService.InputBegan:Connect(function(input)
 end)
 
 refreshAppsUI()
+
+
