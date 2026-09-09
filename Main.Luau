@@ -944,16 +944,28 @@ local appTrackers = {}
 
 task.spawn(function()
 	local s, res = pcall(function()
-		local req = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/servers/public?placeId=" .. game.PlaceId .. "&limit=100"))
-		if req and req.data then
-			for _, server in ipairs(req.data) do
-				if server.id == game.JobId then
-					return server.region or server.ping or "Roblox Server"
+		local cursor = ""
+		while true do
+			local url = string.format("https://games.roproxy.com/v1/games/servers/public?placeId=%d&limit=100%s", game.PlaceId, cursor ~= "" and "&cursor=" .. cursor or "")
+			local req = HttpService:JSONDecode(game:HttpGet(url))
+			
+			if req and req.data then
+				for _, server in ipairs(req.data) do
+					if server.id == game.JobId then
+						return server.region or server.ping or "Roblox Server"
+					end
 				end
+			end
+			
+			if req and req.nextPageCursor then
+				cursor = req.nextPageCursor
+			else
+				break
 			end
 		end
 		return "Roblox Server"
 	end)
+	
 	if s and res then
 		serverLocationText = tostring(res)
 	end
