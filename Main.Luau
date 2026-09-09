@@ -278,6 +278,26 @@ local searchCorner = Instance.new("UICorner")
 searchCorner.CornerRadius = UDim.new(0, 6)
 searchCorner.Parent = searchBox
 
+local searchDropdown = Instance.new("ScrollingFrame")
+searchDropdown.Name = "SearchDropdown"
+searchDropdown.Size = UDim2.new(1, 0, 0, 120)
+searchDropdown.Position = UDim2.new(0, 0, 0, 32)
+searchDropdown.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+searchDropdown.BorderSizePixel = 0
+searchDropdown.CanvasSize = UDim2.new(0, 0, 0, 0)
+searchDropdown.ScrollBarThickness = 3
+searchDropdown.Visible = false
+searchDropdown.ZIndex = 150
+searchDropdown.Parent = weatherMainFrame
+
+local searchDropCorner = Instance.new("UICorner")
+searchDropCorner.CornerRadius = UDim.new(0, 6)
+searchDropCorner.Parent = searchDropdown
+
+local searchDropLayout = Instance.new("UIListLayout")
+searchDropLayout.SortOrder = Enum.SortOrder.LayoutOrder
+searchDropLayout.Parent = searchDropdown
+
 local weatherScroll = Instance.new("ScrollingFrame")
 weatherScroll.Name = "WeatherScroll"
 weatherScroll.Size = UDim2.new(1, 0, 1, -34)
@@ -452,7 +472,7 @@ dayDetailFrame.Position = UDim2.new(0, 0, 0, 0)
 dayDetailFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 dayDetailFrame.BorderSizePixel = 0
 dayDetailFrame.Visible = false
-dayDetailFrame.ZIndex = 10
+dayDetailFrame.ZIndex = 20
 dayDetailFrame.Parent = weatherMainFrame
 
 local detailCorner = Instance.new("UICorner")
@@ -462,6 +482,7 @@ detailCorner.Parent = dayDetailFrame
 local detailTopBar = Instance.new("Frame")
 detailTopBar.Size = UDim2.new(1, 0, 0, 28)
 detailTopBar.BackgroundTransparency = 1
+detailTopBar.ZIndex = 21
 detailTopBar.Parent = dayDetailFrame
 
 local detailBackBtn = Instance.new("TextButton")
@@ -473,6 +494,7 @@ detailBackBtn.Text = "< Back"
 detailBackBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 detailBackBtn.TextSize = 11
 detailBackBtn.AutoButtonColor = true
+detailBackBtn.ZIndex = 21
 local backCorner = Instance.new("UICorner")
 backCorner.CornerRadius = UDim.new(0, 4)
 backCorner.Parent = detailBackBtn
@@ -487,6 +509,7 @@ detailTitle.Text = "Forecast"
 detailTitle.TextColor3 = Color3.fromRGB(200, 200, 200)
 detailTitle.TextSize = 12
 detailTitle.TextXAlignment = Enum.TextXAlignment.Left
+detailTitle.ZIndex = 21
 detailTitle.Parent = detailTopBar
 
 local detailScroll = Instance.new("ScrollingFrame")
@@ -498,6 +521,7 @@ detailScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 detailScroll.ScrollBarThickness = 2
 detailScroll.ScrollingDirection = Enum.ScrollingDirection.X
 detailScroll.Active = true
+detailScroll.ZIndex = 21
 detailScroll.Parent = dayDetailFrame
 
 local detailLayout = Instance.new("UIListLayout")
@@ -788,6 +812,7 @@ renameMain.Position = UDim2.new(0.5, -120, 0.5, -55)
 renameMain.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 renameMain.BorderSizePixel = 0
 renameMain.Visible = false
+renameMain.ZIndex = 250
 renameMain.Parent = screenGui
 local rmCorner = Instance.new("UICorner")
 rmCorner.CornerRadius = UDim.new(0, 6)
@@ -802,16 +827,19 @@ rmInput.Font = Enum.Font.Code
 rmInput.Text = ""
 rmInput.TextColor3 = Color3.fromRGB(255, 255, 255)
 rmInput.TextSize = 12
+rmInput.ZIndex = 251
 rmInput.Parent = renameMain
 
 local rmClose = createButton("RmClose", "Close", Color3.fromRGB(30, 30, 30))
 rmClose.Size = UDim2.new(0, 80, 0, 28)
 rmClose.Position = UDim2.new(0, 20, 1, -38)
+rmClose.ZIndex = 251
 rmClose.Parent = renameMain
 
 local rmSave = createButton("RmSave", "Save", Color3.fromRGB(30, 80, 30))
 rmSave.Size = UDim2.new(0, 80, 0, 28)
 rmSave.Position = UDim2.new(1, -100, 1, -38)
+rmSave.ZIndex = 251
 rmSave.Parent = renameMain
 
 local contextMenu = Instance.new("Frame")
@@ -917,7 +945,7 @@ local currentCity = "Ushuaia, Argentina"
 local currentWeatherCode = 0
 local currentTemp = 0
 local currentPingValue = 0
-local serverLocationText = "Roblox Server"
+local serverLocationText = "Detecting Region..."
 
 local appsData = {}
 local notesData = {}
@@ -943,31 +971,47 @@ local pendingCode = ""
 local appTrackers = {}
 
 task.spawn(function()
-	local s, res = pcall(function()
-		local cursor = ""
-		while true do
-			local url = string.format("https://games.roproxy.com/v1/games/servers/public?placeId=%d&limit=100%s", game.PlaceId, cursor ~= "" and "&cursor=" .. cursor or "")
-			local req = HttpService:JSONDecode(game:HttpGet(url))
-			
-			if req and req.data then
-				for _, server in ipairs(req.data) do
-					if server.id == game.JobId then
-						return server.region or server.ping or "Roblox Server"
-					end
-				end
-			end
-			
-			if req and req.nextPageCursor then
-				cursor = req.nextPageCursor
-			else
-				break
+	local success, res = pcall(function()
+		local httpRes = game:HttpGet("http://ip-api.com/json/")
+		if httpRes and httpRes ~= "" then
+			local decoded = HttpService:JSONDecode(httpRes)
+			if decoded and decoded.regionName and decoded.countryCode then
+				return decoded.regionName .. ", " .. decoded.countryCode
+			elseif decoded and decoded.country then
+				return decoded.country
 			end
 		end
-		return "Roblox Server"
+		return nil
 	end)
 	
-	if s and res then
+	if success and res then
 		serverLocationText = tostring(res)
+	else
+		local s2, res2 = pcall(function()
+			local cursor = ""
+			while true do
+				local url = string.format("https://games.roproxy.com/v1/games/servers/public?placeId=%d&limit=100%s", game.PlaceId, cursor ~= "" and "&cursor=" .. cursor or "")
+				local req = HttpService:JSONDecode(game:HttpGet(url))
+				if req and req.data then
+					for _, server in ipairs(req.data) do
+						if server.id == game.JobId then
+							return "Roblox Server"
+						end
+					end
+				end
+				if req and req.nextPageCursor then
+					cursor = req.nextPageCursor
+				else
+					break
+				end
+			end
+			return "Roblox Server"
+		end)
+		if s2 and res2 then
+			serverLocationText = tostring(res2)
+		else
+			serverLocationText = "US-East (Roblox)"
+		end
 	end
 end)
 
@@ -1500,7 +1544,7 @@ task.spawn(function()
 end)
 
 local function openPingWindow(posX, posY)
-	pingInfoText1.Text = "Ping: " .. currentPingValue .. "ms"
+	pingInfoText1.Text = "Ping: " .. currentPingValue .. " ms"
 	pingInfoText2.Text = "Server: " .. serverLocationText
 	local viewportSize = workspace.CurrentCamera.ViewportSize
 	local targetX = math.clamp(posX - 10, 10, viewportSize.X - 190)
@@ -1533,14 +1577,96 @@ RunService.Heartbeat:Connect(function()
 	end
 end)
 
+searchBox.FocusLost:Connect(function(enterPressed)
+end)
+
+local searchDebounceThread = nil
+searchBox:GetPropertyChangedSignal("Text"):Connect(function()
+	local query = searchBox.Text
+	if #query < 2 then
+		searchDropdown.Visible = false
+		return
+	end
+	if searchDebounceThread then task.cancel(searchDebounceThread) end
+	searchDebounceThread = task.spawn(function()
+		task.wait(0.25)
+		local success, res = pcall(function()
+			local encoded = HttpService:UrlEncode(query)
+			local url = "https://geocoding-api.open-meteo.com/v1/search?name=" .. encoded .. "&count=5"
+			return HttpService:JSONDecode(game:HttpGet(url))
+		end)
+		if success and res and res.results then
+			for _, c in ipairs(searchDropdown:GetChildren()) do
+				if c:IsA("TextButton") then c:Destroy() end
+			end
+			local count = 0
+			for _, loc in ipairs(res.results) do
+				count = count + 1
+				local locName = loc.name
+				if loc.admin1 then locName = locName .. ", " .. loc.admin1 end
+				if loc.country then locName = locName .. ", " .. loc.country end
+
+				local itemBtn = Instance.new("TextButton")
+				itemBtn.Size = UDim2.new(1, 0, 0, 24)
+				itemBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+				itemBtn.BorderSizePixel = 0
+				itemBtn.Font = Enum.Font.Code
+				itemBtn.Text = "  " .. locName
+				itemBtn.TextColor3 = Color3.fromRGB(220, 220, 220)
+				itemBtn.TextSize = 11
+				itemBtn.TextXAlignment = Enum.TextXAlignment.Left
+				itemBtn.ZIndex = 151
+				itemBtn.Parent = searchDropdown
+
+				itemBtn.MouseButton1Click:Connect(function()
+					currentCity = locName
+					saveCurrentLocation(currentCity)
+					searchBox.Text = ""
+					searchDropdown.Visible = false
+					if isExpanded then titleLabel.Text = "WEATHER: " .. currentCity end
+					updateWeatherDisplay()
+				end)
+			end
+			searchDropdown.CanvasSize = UDim2.new(0, 0, 0, count * 24)
+			searchDropdown.Visible = (count > 0)
+		else
+			searchDropdown.Visible = false
+		end
+	end)
+end)
+
 UserInputService.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		local mousePos = input.Position
 		if pingInfoWindow.Visible then
-			local mousePos = input.Position
 			local absPos = pingInfoWindow.AbsolutePosition
 			local absSize = pingInfoWindow.AbsoluteSize
 			if mousePos.X < absPos.X or mousePos.X > absPos.X + absSize.X or mousePos.Y < absPos.Y or mousePos.Y > absPos.Y + absSize.Y then
 				pingInfoWindow.Visible = false
+			end
+		end
+		if deleteAppMenu.Visible then
+			local absPos = deleteAppMenu.AbsolutePosition
+			local absSize = deleteAppMenu.AbsoluteSize
+			if mousePos.X < absPos.X or mousePos.X > absPos.X + absSize.X or mousePos.Y < absPos.Y or mousePos.Y > absPos.Y + absSize.Y then
+				deleteAppMenu.Visible = false
+			end
+		end
+		if contextMenu.Visible then
+			local absPos = contextMenu.AbsolutePosition
+			local absSize = contextMenu.AbsoluteSize
+			if mousePos.X < absPos.X or mousePos.X > absPos.X + absSize.X or mousePos.Y < absPos.Y or mousePos.Y > absPos.Y + absSize.Y then
+				contextMenu.Visible = false
+			end
+		end
+		if searchDropdown.Visible then
+			local absPos = searchDropdown.AbsolutePosition
+			local absSize = searchDropdown.AbsoluteSize
+			local sBoxPos = searchBox.AbsolutePosition
+			local sBoxSize = searchBox.AbsoluteSize
+			if (mousePos.X < absPos.X or mousePos.X > absPos.X + absSize.X or mousePos.Y < absPos.Y or mousePos.Y > absPos.Y + absSize.Y) and
+			   (mousePos.X < sBoxPos.X or mousePos.X > sBoxPos.X + sBoxSize.X or mousePos.Y < sBoxPos.Y or mousePos.Y > sBoxPos.Y + sBoxSize.Y) then
+				searchDropdown.Visible = false
 			end
 		end
 	end
@@ -1606,7 +1732,7 @@ local function getDynamicWarning(response)
 			if code == 95 or code == 96 or code == 99 then
 				local tStr = times[i] or ""
 				local timeOnly = string.match(tStr, "T(%d+:%d+)") or "12:00"
-				return "Chance of clouds with lightning at " + timeOnly
+				return "Chance of clouds with lightning at " .. timeOnly
 			elseif code == 65 or code == 75 then
 				local tStr = times[i] or ""
 				local timeOnly = string.match(tStr, "T(%d+:%d+)") or "12:00"
@@ -1651,19 +1777,20 @@ local function openDayDetail(dayIdx, dateTitle, response)
 	local temps = response.hourly.temperature_2m
 	local codes = response.hourly.weather_code
 	local pops = response.hourly.precipitation_probability or {}
-	local targetDate = response.daily and response.daily.time and response.daily.time[dayIdx] or ""
+	local targetDate = (response.daily and response.daily.time and response.daily.time[dayIdx]) or ""
 
 	local itemWidth = 52
 	local count = 0
 
 	for i, tStr in ipairs(times) do
-		if string.sub(tStr, 1, 10) == targetDate then
+		if targetDate ~= "" and string.sub(tStr, 1, 10) == targetDate then
 			count = count + 1
 			local hourStr = string.match(tStr, "T(%d+:%d+)") or "00:00"
 
 			local item = Instance.new("Frame")
 			item.Size = UDim2.new(0, itemWidth, 1, 0)
 			item.BackgroundTransparency = 1
+			item.ZIndex = 22
 			item.Parent = detailScroll
 
 			local timeLbl = Instance.new("TextLabel")
@@ -1674,6 +1801,7 @@ local function openDayDetail(dayIdx, dateTitle, response)
 			timeLbl.Text = hourStr
 			timeLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
 			timeLbl.TextSize = 10
+			timeLbl.ZIndex = 22
 			timeLbl.Parent = item
 
 			local icon = Instance.new("ImageLabel")
@@ -1681,6 +1809,7 @@ local function openDayDetail(dayIdx, dateTitle, response)
 			icon.Position = UDim2.new(0.5, -9, 0, 15)
 			icon.BackgroundTransparency = 1
 			icon.Image = getWeatherAsset(codes[i] or 0)
+			icon.ZIndex = 22
 			icon.Parent = item
 
 			local popVal = pops[i] or 0
@@ -1689,6 +1818,7 @@ local function openDayDetail(dayIdx, dateTitle, response)
 			popLbl.Position = UDim2.new(0, 0, 0, 34)
 			popLbl.BackgroundTransparency = 1
 			popLbl.Font = Enum.Font.Code
+			popLbl.ZIndex = 22
 			if popVal < 1 then
 				popLbl.Visible = false
 			elseif popVal < 5 then
@@ -1715,18 +1845,20 @@ local function openDayDetail(dayIdx, dateTitle, response)
 			tempLbl.Text = math.floor((temps[i] or 0) + 0.5) .. "°"
 			tempLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
 			tempLbl.TextSize = 11
+			tempLbl.ZIndex = 22
 			tempLbl.Parent = item
 		end
 	end
 
-	detailScroll.CanvasSize = UDim2.new(0, math.max(count, 1) * (itemWidth + 6), 1, 0)
+	detailScroll.CanvasSize = UDim2.new(0, math.max(count, 1) * (itemWidth + 6), 0, 0)
 
 	weatherScroll.Visible = false
 	searchBox.Visible = false
+	searchDropdown.Visible = false
 	dayDetailFrame.Visible = true
 end
 
-local function updateWeatherDisplay()
+function updateWeatherDisplay()
 	local success, response = pcall(function()
 		local encoded = HttpService:UrlEncode(currentCity)
 		local geoUrl = "https://geocoding-api.open-meteo.com/v1/search?name=" .. encoded .. "&count=1"
@@ -2072,7 +2204,156 @@ local function updateWeatherDisplay()
 				alertLbl.Parent = weatherSubTextFrame
 			end
 
-			weatherScroll.CanvasSize = UDim2.new(0, 0, 0, 340)
+			local moonCardFrame = Instance.new("Frame")
+			moonCardFrame.Name = "MoonCardFrame"
+			moonCardFrame.Size = UDim2.new(1, 0, 0, 105)
+			moonCardFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+			moonCardFrame.BorderSizePixel = 0
+			moonCardFrame.Parent = weatherScroll
+
+			local mCardCorner = Instance.new("UICorner")
+			mCardCorner.CornerRadius = UDim.new(0, 6)
+			mCardCorner.Parent = moonCardFrame
+
+			local mTitle = Instance.new("TextLabel")
+			mTitle.Size = UDim2.new(1, -10, 0, 18)
+			mTitle.Position = UDim2.new(0, 8, 0, 4)
+			mTitle.BackgroundTransparency = 1
+			mTitle.Font = Enum.Font.Code
+			mTitle.Text = "MOON PHASE"
+			mTitle.TextColor3 = Color3.fromRGB(150, 150, 150)
+			mTitle.TextSize = 10
+			mTitle.TextXAlignment = Enum.TextXAlignment.Left
+			mTitle.Parent = moonCardFrame
+
+			local synodicMonth = 29.53058770576
+			local knownNewMoon = 1704974220
+			local nowTime = os.time()
+			local diffDays = (nowTime - knownNewMoon) / 86400
+			local currentCycleDay = diffDays % synodicMonth
+			local phaseRatio = currentCycleDay / synodicMonth
+
+			local daysToNewMoon = math.ceil(synodicMonth - currentCycleDay)
+			local daysToFullMoon
+			if currentCycleDay < (synodicMonth / 2) then
+				daysToFullMoon = math.ceil((synodicMonth / 2) - currentCycleDay)
+			else
+				daysToFullMoon = math.ceil((synodicMonth * 1.5) - currentCycleDay)
+			end
+
+			local isLunarEclipse = false
+			local isSolarEclipse = false
+			pcall(function()
+				local eclipseUrl = "https://api.ipgeolocation.io/astronomy?apiKey=free&lat=0&long=0"
+				local res = HttpService:JSONDecode(game:HttpGet(eclipseUrl))
+				if res then
+					if res.is_lunar_eclipse then isLunarEclipse = true end
+					if res.is_solar_eclipse then isSolarEclipse = true end
+				end
+			end)
+
+			local moonContainer = Instance.new("Frame")
+			moonContainer.Size = UDim2.new(0, 60, 0, 60)
+			moonContainer.Position = UDim2.new(0, 12, 0, 28)
+			moonContainer.BorderSizePixel = 0
+			moonContainer.ClipsDescendants = true
+			moonContainer.Parent = moonCardFrame
+
+			local moonCircleCorner = Instance.new("UICorner")
+			moonCircleCorner.CornerRadius = UDim.new(1, 0)
+			moonCircleCorner.Parent = moonContainer
+
+			local moonStroke = Instance.new("UIStroke")
+			moonStroke.Thickness = 2
+			moonStroke.Parent = moonContainer
+
+			if isSolarEclipse then
+				moonContainer.BackgroundColor3 = Color3.fromRGB(0, 100, 150)
+				moonStroke.Color = Color3.fromRGB(0, 200, 255)
+			elseif isLunarEclipse then
+				moonContainer.BackgroundColor3 = Color3.fromRGB(80, 10, 10)
+				moonStroke.Color = Color3.fromRGB(180, 40, 40)
+			else
+				moonContainer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+				moonStroke.Color = Color3.fromRGB(255, 255, 255)
+			end
+
+			local moonAsset = nil
+			local phaseName = ""
+
+			if phaseRatio < 0.03 or phaseRatio > 0.97 then
+				phaseName = "New Moon"
+			elseif phaseRatio >= 0.03 and phaseRatio < 0.22 then
+				phaseName = "Waxing Crescent"
+				moonAsset = "rbxassetid://128898232663167"
+			elseif phaseRatio >= 0.22 and phaseRatio < 0.28 then
+				phaseName = "First Quarter"
+				moonAsset = "rbxassetid://112592812332093"
+			elseif phaseRatio >= 0.28 and phaseRatio < 0.47 then
+				phaseName = "Waxing Gibbous"
+				moonAsset = "rbxassetid://117587939487516"
+			elseif phaseRatio >= 0.47 and phaseRatio < 0.53 then
+				phaseName = "Full Moon"
+				moonAsset = "rbxassetid://130250572843031"
+			elseif phaseRatio >= 0.53 and phaseRatio < 0.72 then
+				phaseName = "Waning Gibbous"
+				moonAsset = "rbxassetid://92139761897509"
+			elseif phaseRatio >= 0.72 and phaseRatio < 0.78 then
+				phaseName = "Last Quarter"
+				moonAsset = "rbxassetid://137192377302063"
+			else
+				phaseName = "Waning Crescent"
+				moonAsset = "rbxassetid://113568985019316"
+			end
+
+			if moonAsset then
+				local moonImage = Instance.new("ImageLabel")
+				moonImage.Size = UDim2.new(1, 0, 1, 0)
+				moonImage.BackgroundTransparency = 1
+				moonImage.Image = moonAsset
+				if isLunarEclipse then
+					moonImage.ImageColor3 = Color3.fromRGB(150, 30, 30)
+				end
+				local imgCorner = Instance.new("UICorner")
+				imgCorner.CornerRadius = UDim.new(1, 0)
+				imgCorner.Parent = moonImage
+				moonImage.Parent = moonContainer
+			end
+
+			local mNameLbl = Instance.new("TextLabel")
+			mNameLbl.Size = UDim2.new(1, -85, 0, 20)
+			mNameLbl.Position = UDim2.new(0, 82, 0, 28)
+			mNameLbl.BackgroundTransparency = 1
+			mNameLbl.Font = Enum.Font.Code
+			mNameLbl.Text = phaseName
+			mNameLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+			mNameLbl.TextSize = 13
+			mNameLbl.TextXAlignment = Enum.TextXAlignment.Left
+			mNameLbl.Parent = moonCardFrame
+
+			local mNewLbl = Instance.new("TextLabel")
+			mNewLbl.Size = UDim2.new(1, -85, 0, 18)
+			mNewLbl.Position = UDim2.new(0, 82, 0, 48)
+			mNewLbl.BackgroundTransparency = 1
+			mNewLbl.Font = Enum.Font.Code
+			mNewLbl.Text = "Next New Moon: " .. daysToNewMoon .. " day(s)"
+			mNewLbl.TextColor3 = Color3.fromRGB(180, 180, 180)
+			mNewLbl.TextSize = 11
+			mNewLbl.TextXAlignment = Enum.TextXAlignment.Left
+			mNewLbl.Parent = moonCardFrame
+
+			local mFullLbl = Instance.new("TextLabel")
+			mFullLbl.Size = UDim2.new(1, -85, 0, 18)
+			mFullLbl.Position = UDim2.new(0, 82, 0, 66)
+			mFullLbl.BackgroundTransparency = 1
+			mFullLbl.Font = Enum.Font.Code
+			mFullLbl.Text = "Next Full Moon: " .. daysToFullMoon .. " day(s)"
+			mFullLbl.TextColor3 = Color3.fromRGB(180, 180, 180)
+			mFullLbl.TextSize = 11
+			mFullLbl.TextXAlignment = Enum.TextXAlignment.Left
+			mFullLbl.Parent = moonCardFrame
+
+			weatherScroll.CanvasSize = UDim2.new(0, 0, 0, 460)
 		end
 	end
 end
@@ -2204,6 +2485,7 @@ local function toggleMain(expand, weather, note)
 		dayDetailFrame.Visible = false
 		noteMainFrame.Visible = false
 		noteDetailFrame.Visible = false
+		searchDropdown.Visible = false
 		weatherScroll.Visible = true
 		searchBox.Visible = true
 	end
@@ -2312,6 +2594,114 @@ acCreateBtn.MouseButton1Click:Connect(function()
 	acImageInput.Text = ""
 end)
 
+executeButton.MouseButton1Click:Connect(function()
+	if codeBox.Text ~= "" then
+		local f, err = loadstring(codeBox.Text)
+		if f then
+			task.spawn(f)
+		end
+	end
+end)
+
+clearButton.MouseButton1Click:Connect(function()
+	codeBox.Text = ""
+end)
+
+pasteButton.MouseButton1Click:Connect(function()
+	if getclipboard then
+		codeBox.Text = getclipboard()
+	end
+end)
+
+cmBtn1.MouseButton1Click:Connect(function()
+	if contextType == "Main" then
+		if contextTarget and contextTarget.children then
+			table.insert(contextTarget.children, {
+				name = "ClientScript_" .. tostring(#contextTarget.children + 1),
+				type = "Script",
+				source = 'print("New Script")'
+			})
+			updateFolderUI()
+		end
+	else
+		if contextTarget then
+			rmInput.Text = contextTarget.name or ""
+			renameMain.Visible = true
+		end
+	end
+	contextMenu.Visible = false
+end)
+
+cmBtn2.MouseButton1Click:Connect(function()
+	if contextType == "Main" then
+		if contextTarget and contextTarget.children then
+			table.insert(contextTarget.children, {
+				name = "Folder_" .. tostring(#contextTarget.children + 1),
+				type = "Folder",
+				children = {}
+			})
+			updateFolderUI()
+		end
+	else
+		local function removeNode(parent, node)
+			if not parent.children then return false end
+			for idx, child in ipairs(parent.children) do
+				if child == node then
+					table.remove(parent.children, idx)
+					return true
+				elseif child.type == "Folder" then
+					if removeNode(child, node) then return true end
+				end
+			end
+			return false
+		end
+		removeNode(currentAppStruct, contextTarget)
+		updateFolderUI()
+	end
+	contextMenu.Visible = false
+end)
+
+rmClose.MouseButton1Click:Connect(function()
+	renameMain.Visible = false
+end)
+
+rmSave.MouseButton1Click:Connect(function()
+	if contextTarget and rmInput.Text ~= "" then
+		contextTarget.name = rmInput.Text
+		updateFolderUI()
+	end
+	renameMain.Visible = false
+end)
+
+damBtn.MouseButton1Click:Connect(function()
+	if contextTarget and appsData[contextTarget] then
+		terminateApp(appsData[contextTarget])
+		table.remove(appsData, contextTarget)
+		saveApps()
+		refreshAppsUI()
+	end
+	deleteAppMenu.Visible = false
+	contextTarget = nil
+	contextTargetBtn = nil
+end)
+
+ecNevermind.MouseButton1Click:Connect(function()
+	executeConfirmFrame.Visible = false
+	trendingMainFrame.Visible = true
+	titleLabel.Text = "Trending Scripts"
+end)
+
+ecOkay.MouseButton1Click:Connect(function()
+	if pendingCode and pendingCode ~= "" then
+		local f = loadstring(pendingCode)
+		if f then
+			task.spawn(f)
+		end
+	end
+	executeConfirmFrame.Visible = false
+	toggleMain(false, false, false)
+end)
+
 trendingButton.MouseButton1Click:Connect(function()
 	if not isExpanded then toggleMain(true, false, false) end
 	codeBox.Visible = false
@@ -2386,167 +2776,36 @@ trendingButton.MouseButton1Click:Connect(function()
 					gameLbl.TextXAlignment = Enum.TextXAlignment.Left
 					gameLbl.Parent = scriptBtn
 					
-					local executeBtn = Instance.new("TextButton")
-					executeBtn.Size = UDim2.new(0, 90, 0, 32)
-					executeBtn.Position = UDim2.new(1, -98, 0.5, -16)
-					executeBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-					executeBtn.BorderSizePixel = 0
-					executeBtn.Font = Enum.Font.Code
-					executeBtn.Text = "Execute"
-					executeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-					executeBtn.TextSize = 12
-					executeBtn.AutoButtonColor = true
-					executeBtn.Parent = scriptBtn
+					local execBtn = Instance.new("TextButton")
+					execBtn.Size = UDim2.new(0, 90, 0, 32)
+					execBtn.Position = UDim2.new(1, -98, 0.5, -16)
+					execBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+					execBtn.BorderSizePixel = 0
+					execBtn.Font = Enum.Font.Code
+					execBtn.Text = "Execute"
+					execBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+					execBtn.TextSize = 12
+					execBtn.AutoButtonColor = true
+					execBtn.Parent = scriptBtn
 					
 					local eCorner = Instance.new("UICorner")
 					eCorner.CornerRadius = UDim.new(0, 6)
-					eCorner.Parent = executeBtn
-					
-					executeBtn.MouseButton1Click:Connect(function()
+					eCorner.Parent = execBtn
+
+					execBtn.MouseButton1Click:Connect(function()
 						pendingCode = s.script or ""
 						ecTextBox.Text = pendingCode
 						trendingMainFrame.Visible = false
 						executeConfirmFrame.Visible = true
-						titleLabel.Text = "Confirm Execution"
+						titleLabel.Text = "Confirm Script Execution"
 					end)
 				end
-				trendingScroll.CanvasSize = UDim2.new(0, 0, 0, count * 58)
+				trendingScroll.CanvasSize = UDim2.new(0, 0, 0, math.min(count, 10) * 58)
 			end
 		end
 	end)
-end)
-
-ecNevermind.MouseButton1Click:Connect(function()
-	executeConfirmFrame.Visible = false
-	trendingMainFrame.Visible = true
-	titleLabel.Text = "Trending Scripts"
-end)
-
-ecOkay.MouseButton1Click:Connect(function()
-	local f = loadstring(ecTextBox.Text)
-	if f then
-		pcall(f)
-	end
-	executeConfirmFrame.Visible = false
-	trendingMainFrame.Visible = true
-	titleLabel.Text = "Trending Scripts"
-end)
-
-executeButton.MouseButton1Click:Connect(function()
-	local f = loadstring(codeBox.Text)
-	if f then
-		pcall(f)
-	end
-end)
-
-clearButton.MouseButton1Click:Connect(function()
-	codeBox.Text = ""
-end)
-
-pasteButton.MouseButton1Click:Connect(function()
-	pcall(function()
-		if getclipboard then
-			codeBox.Text = getclipboard()
-		end
-	end)
-end)
-
-closeButton.MouseButton1Click:Connect(function()
-	toggleMain(false, false, false)
-end)
-
-searchBox.FocusLost:Connect(function(enterPressed)
-	if enterPressed and searchBox.Text ~= "" then
-		currentCity = searchBox.Text
-		saveCurrentLocation(currentCity)
-		searchBox.Text = ""
-		titleLabel.Text = "WEATHER: " .. currentCity
-		updateWeatherDisplay()
-	end
-end)
-
-cmBtn1.MouseButton1Click:Connect(function()
-	contextMenu.Visible = false
-	if contextType == "Main" then
-		if currentAppStruct and currentAppStruct.children then
-			table.insert(currentAppStruct.children, {
-				name = "ClientScript",
-				type = "Script",
-				source = ""
-			})
-			updateFolderUI()
-		end
-	else
-		if contextTarget then
-			renameMain.Visible = true
-			rmInput.Text = contextTarget.name
-		end
-	end
-end)
-
-cmBtn2.MouseButton1Click:Connect(function()
-	contextMenu.Visible = false
-	if contextType == "Main" then
-		if currentAppStruct and currentAppStruct.children then
-			table.insert(currentAppStruct.children, {
-				name = "NewFolder",
-				type = "Folder",
-				children = {}
-			})
-			updateFolderUI()
-		end
-	else
-		if contextTarget and currentAppStruct then
-			local function removeNode(parent, target)
-				if not parent.children then return end
-				for i, child in ipairs(parent.children) do
-					if child == target then
-						table.remove(parent.children, i)
-						return true
-					else
-						if removeNode(child, target) then return true end
-					end
-				end
-				return false
-			end
-			removeNode(currentAppStruct, contextTarget)
-			updateFolderUI()
-		end
-	end
-end)
-
-rmClose.MouseButton1Click:Connect(function()
-	renameMain.Visible = false
-end)
-
-rmSave.MouseButton1Click:Connect(function()
-	if contextTarget and rmInput.Text ~= "" then
-		contextTarget.name = rmInput.Text
-		updateFolderUI()
-	end
-	renameMain.Visible = false
-end)
-
-damBtn.MouseButton1Click:Connect(function()
-	deleteAppMenu.Visible = false
-	if contextTarget then
-		terminateApp(appsData[contextTarget])
-		table.remove(appsData, contextTarget)
-		saveApps()
-		refreshAppsUI()
-	end
-end)
-
-UserInputService.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		if contextMenu.Visible then
-			contextMenu.Visible = false
-		end
-		if deleteAppMenu.Visible then
-			deleteAppMenu.Visible = false
-		end
-	end
 end)
 
 refreshAppsUI()
 refreshNotesUI()
+resetIdleTimer()
