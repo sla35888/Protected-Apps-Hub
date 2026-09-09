@@ -1539,18 +1539,18 @@ local function getWeatherAsset(code)
 	elseif code == 1 then return "rbxassetid://89819932982430"
 	elseif code == 2 then return "rbxassetid://104524040159057"
 	elseif code == 3 then return "rbxassetid://100955492250141"
-	elseif code >= 45 and code <= 48 then return "rbxassetid://70432872473102"
+	elseif code >= 45 and code <= 48 then return "rbxassetid://17514296880"
 	elseif code == 51 or code == 53 or code == 55 then return "rbxassetid://112276281424544"
 	elseif code >= 61 and code <= 63 then return "rbxassetid://121339017688218"
 	elseif code == 65 then return "rbxassetid://96332226552349"
 	elseif code == 71 or code == 85 then return "rbxassetid://99523745600553"
-	elseif code == 73 or code == 77 then return "rbxassetid://136138054838480"
+	elseif code == 73 or code == 77 then return "rbxassetid://92775498049292"
 	elseif code == 75 or code == 86 then return "rbxassetid://118529329051945"
 	elseif code == 80 then return "rbxassetid://126410542264413"
 	elseif code >= 81 and code <= 82 then return "rbxassetid://96332226552349"
 	elseif code == 95 then return "rbxassetid://77207049898483"
 	elseif code == 96 or code == 99 then return "rbxassetid://118053892864488"
-	else return "rbxassetid://82410735894036"
+	else return "rbxassetid://100955492250141"
 	end
 end
 
@@ -1571,7 +1571,7 @@ local function getWeatherName(code)
 	elseif code == 85 or code == 86 then return "Snow Showers"
 	elseif code == 95 then return "Thunderstorm"
 	elseif code == 96 or code == 99 then return "Thunderstorm"
-	else return "Clear"
+	else return "Overcast"
 	end
 end
 
